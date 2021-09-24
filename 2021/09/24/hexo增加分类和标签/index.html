@@ -20,15 +20,15 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Gemini","version":"8.7.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
-<meta name="description" content="1. 创建“分类”选项生成“分类”页并添加tpye属性,进入博客目录。执行命令下方命令 1hexo new page categories  categories文件夹下会有index.md这个文件，打开后默认内容是这样的： 1234---title: categoriesdate: 2021-09-24 14:43:00---  添加type: “categories”到内容中，添加后是这样的：">
+<meta name="description" content="创建“分类”选项在hexo目录下，执行： 1hexo new page categories  hexo\source目录下会生成categories文件夹；编辑categories\index.md，添加    type: “categories”；添加后保存并关闭文件。 12345---title: 分类date: 2021-09-24 14:43:00type: categories---">
 <meta property="og:type" content="article">
 <meta property="og:title" content="hexo增加分类和标签">
 <meta property="og:url" content="http://example.com/2021/09/24/hexo%E5%A2%9E%E5%8A%A0%E5%88%86%E7%B1%BB%E5%92%8C%E6%A0%87%E7%AD%BE/index.html">
 <meta property="og:site_name" content="Curry&#39;s Blog">
-<meta property="og:description" content="1. 创建“分类”选项生成“分类”页并添加tpye属性,进入博客目录。执行命令下方命令 1hexo new page categories  categories文件夹下会有index.md这个文件，打开后默认内容是这样的： 1234---title: categoriesdate: 2021-09-24 14:43:00---  添加type: “categories”到内容中，添加后是这样的：">
+<meta property="og:description" content="创建“分类”选项在hexo目录下，执行： 1hexo new page categories  hexo\source目录下会生成categories文件夹；编辑categories\index.md，添加    type: “categories”；添加后保存并关闭文件。 12345---title: 分类date: 2021-09-24 14:43:00type: categories---">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2021-09-24T06:58:15.000Z">
-<meta property="article:modified_time" content="2021-09-24T07:05:59.942Z">
+<meta property="article:modified_time" content="2021-09-24T07:44:44.785Z">
 <meta property="article:author" content="Curry">
 <meta property="article:tag" content="hexo">
 <meta name="twitter:card" content="summary">
@@ -108,7 +108,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-%E5%88%9B%E5%BB%BA%E2%80%9C%E5%88%86%E7%B1%BB%E2%80%9D%E9%80%89%E9%A1%B9"><span class="nav-number">1.</span> <span class="nav-text">1. 创建“分类”选项</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-%E5%88%9B%E5%BB%BA%E2%80%9C%E6%A0%87%E7%AD%BE%E2%80%9D%E9%80%89%E9%A1%B9"><span class="nav-number">2.</span> <span class="nav-text">2. 创建“标签”选项</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E2%80%9C%E5%88%86%E7%B1%BB%E2%80%9D%E9%80%89%E9%A1%B9"><span class="nav-number">1.</span> <span class="nav-text">创建“分类”选项</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E2%80%9C%E6%A0%87%E7%AD%BE%E2%80%9D%E9%80%89%E9%A1%B9%EF%BC%88%E4%B8%8E%E6%B7%BB%E5%8A%A0%E5%88%86%E7%B1%BB%E6%93%8D%E4%BD%9C%E7%B1%BB%E4%BC%BC%EF%BC%89"><span class="nav-number">2.</span> <span class="nav-text">创建“标签”选项（与添加分类操作类似）</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -198,7 +198,7 @@
       <span class="post-meta-item-text">发表于</span>
       
 
-      <time title="创建时间：2021-09-24 14:58:15 / 修改时间：15:05:59" itemprop="dateCreated datePublished" datetime="2021-09-24T14:58:15+08:00">2021-09-24</time>
+      <time title="创建时间：2021-09-24 14:58:15 / 修改时间：15:44:44" itemprop="dateCreated datePublished" datetime="2021-09-24T14:58:15+08:00">2021-09-24</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -220,35 +220,30 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <h4 id="1-创建“分类”选项"><a href="#1-创建“分类”选项" class="headerlink" title="1. 创建“分类”选项"></a><strong>1. 创建“分类”选项</strong></h4><p>生成“分类”页并添加tpye属性,进入博客目录。执行命令下方命令</p>
+        <h4 id="创建“分类”选项"><a href="#创建“分类”选项" class="headerlink" title="创建“分类”选项"></a><strong>创建“分类”选项</strong></h4><p>在hexo目录下，执行：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo new page categories</span><br></pre></td></tr></table></figure>
 
-<p>categories文件夹下会有index.md这个文件，打开后默认内容是这样的：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">---</span><br><span class="line">title: categories</span><br><span class="line">date: 2021-09-24 14:43:00</span><br><span class="line">---</span><br></pre></td></tr></table></figure>
-
-<p>添加type: “categories”到内容中，添加后是这样的：</p>
+<p>hexo\source目录下会生成categories文件夹；编辑categories\index.md，添加    type: “categories”；添加后保存并关闭文件。</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">---</span><br><span class="line">title: 分类</span><br><span class="line">date: 2021-09-24 14:43:00</span><br><span class="line">type: categories</span><br><span class="line">---</span><br></pre></td></tr></table></figure>
 
-<p>保存并关闭文件。</p>
-<p>给文章添加“categories”属性</p>
-<p>打开需要添加分类的文章，为其添加categories属性。下方的categories:Hexo表示这篇文章添加到到“Hexo”这个分类。注意：一篇文章只会添加到一个分类中，如果是多个默认放到第一个分类中。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">---</span><br><span class="line">title: hexo增加分类和标签</span><br><span class="line">date: 2021-09-24 14:43:00</span><br><span class="line">categories: Hexo</span><br><span class="line">---</span><br></pre></td></tr></table></figure>
+<p><strong>给文章添加“categories”属性</strong></p>
+<p>打开需要添加分类的文章，为其添加categories属性。</p>
+<p>下方的categories:hexo表示这篇文章添加到到“hexo”这个分类。注意：一篇文章只会添加到一个分类中，如果是多个默认放到第一个分类中。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">---</span><br><span class="line">title: hexo增加分类和标签</span><br><span class="line">date: 2021-09-24 14:43:00</span><br><span class="line">categories: hexo</span><br><span class="line">---</span><br></pre></td></tr></table></figure>
 
-<p>至此，成功给文章添加分类，点击首页的“分类”可以看到该分类下的所有文章。当然，只有添加了categories: xxx的文章才会被收录到首页的“分类”中。</p>
-<h4 id="2-创建“标签”选项"><a href="#2-创建“标签”选项" class="headerlink" title="2. 创建“标签”选项"></a><strong>2. 创建“标签”选项</strong></h4><p>生成“标签”页并添加tpye属性</p>
+
+
+<h4 id="创建“标签”选项（与添加分类操作类似）"><a href="#创建“标签”选项（与添加分类操作类似）" class="headerlink" title="创建“标签”选项（与添加分类操作类似）"></a><strong>创建“标签”选项</strong>（与添加分类操作类似）</h4><p>在hexo目录下，执行：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo new page tags</span><br></pre></td></tr></table></figure>
 
-<p>在tags文件夹下，找到index.md这个文件，打开后默认内容是这样的：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">---</span><br><span class="line">title: 标签</span><br><span class="line">date: 2021-09-24 14:43:00</span><br><span class="line">---</span><br></pre></td></tr></table></figure>
-
-<p>添加type: “tags”到内容中，添加后是这样的：</p>
+<p>hexo\source目录下会生成tags文件夹；编辑tags\index.md，添加    type: “tags”；添加后保存并关闭文件。</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">---</span><br><span class="line">title: 标签</span><br><span class="line">date: 2021-09-24 14:43:00</span><br><span class="line">type: tags</span><br><span class="line">---</span><br></pre></td></tr></table></figure>
 
-<p>保存并关闭文件。</p>
-<p>给文章添加“tags”属性,打开需要添加标签的文章，为其添加tags属性。</p>
+<p><strong>给文章添加“tags”属性</strong></p>
+<p>打开需要添加标签的文章，为其添加tags属性。</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">---</span><br><span class="line">title: hexo增加分类和标签</span><br><span class="line">date: 2019-04-24 15:40:24</span><br><span class="line">categories: hexo</span><br><span class="line">tags: hexo</span><br><span class="line">---</span><br></pre></td></tr></table></figure>
 
-<p><strong>转载：</strong></p>
+<p><strong>参考：</strong></p>
 <p><a target="_blank" rel="noopener" href="https://juejin.cn/post/6844903830216261645">https://juejin.cn/post/6844903830216261645</a></p>
 
     </div>
