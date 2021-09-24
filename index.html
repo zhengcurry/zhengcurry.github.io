@@ -116,12 +116,12 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">1</span>
+          <span class="site-state-item-count">2</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-count">2</span>
         <span class="site-state-item-name">标签</span>
       </div>
   </nav>
@@ -151,6 +151,74 @@
 
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/09/24/T-Unit/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Curry">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Curry's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2021/09/24/T-Unit/" class="post-title-link" itemprop="url">T.()->Unit</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2021-09-24 13:57:58 / 修改时间：14:08:37" itemprop="dateCreated datePublished" datetime="2021-09-24T13:57:58+08:00">2021-09-24</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>T.()-&gt;Unit相当于是给类T定义了一个扩展函数，该函数没有形参，没有返回值；</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typealias</span> CallBack&lt;T&gt; = TestCallBack&lt;T&gt;.()-&gt;<span class="built_in">Unit</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">test</span><span class="params">(callback:<span class="type">CallBack</span>&lt;<span class="type">T</span>&gt;)</span></span>&#123;</span><br><span class="line">    <span class="keyword">val</span> test = TestCallBack&lt;T&gt;()</span><br><span class="line">    test.callback()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里callback就相当于一个TestCallBack的扩展函数，所以可以test.callback()</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
