@@ -2,7 +2,7 @@
 title: 'git@github.com: Permission denied (publickey).'
 date: 2021-09-25 12:00:56
 tags: git
-categroies: git
+categories: git
 ---
 
 #### **问题描述**
