@@ -191,7 +191,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2021/09/27/android%E4%B8%AD%E7%9A%84System-gc/" class="post-title-link" itemprop="url">android中的System.gc()</a>
+          <a href="/2021/09/27/android%E4%B8%AD%E7%9A%84System-gc/" class="post-title-link" itemprop="url">android调用System.gc()有用么？</a>
         </h2>
 
         <div class="post-meta-container">
@@ -201,10 +201,16 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">发表于</span>
-      
 
-      <time title="创建时间：2021-09-27 10:43:43 / 修改时间：10:58:38" itemprop="dateCreated datePublished" datetime="2021-09-27T10:43:43+08:00">2021-09-27</time>
+      <time title="创建时间：2021-09-27 10:43:43" itemprop="dateCreated datePublished" datetime="2021-09-27T10:43:43+08:00">2021-09-27</time>
     </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2021-09-29 13:37:09" itemprop="dateModified" datetime="2021-09-29T13:37:09+08:00">2021-09-29</time>
+      </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
         <i class="far fa-folder"></i>
@@ -225,7 +231,18 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <p>在Android中，调用System.gc(）并不起作用</p>
+          <h4 id="结论"><a href="#结论" class="headerlink" title="结论"></a><strong>结论</strong></h4><p>在Android中，仅调用System.gc(）并不起作用；</p>
+<p>若有需求，可采用方法：</p>
+<ol>
+<li>直接调用<code>Runtime.getRuntime().gc()</code></li>
+<li>调用<code>System.runFinalization()</code>和<code>System.gc()</code></li>
+</ol>
+<blockquote>
+<p>即使没有显式调用gc方法，虚拟机也会根据需要在单独的线程中自动执行此回收过程</p>
+</blockquote>
+<h4 id="源码分析"><a href="#源码分析" class="headerlink" title="源码分析"></a><strong>源码分析</strong></h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> *	System.gc(）源码</span></span><br><span class="line"><span class="comment"> *	由此可见，真正起作用的是Runtime.getRuntime().gc()，</span></span><br><span class="line"><span class="comment"> *	且仅当shouldRunGC=true时，才会执行；</span></span><br><span class="line"><span class="comment"> *	而shouldRunGC的赋值取决于justRanFinaljuization</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">gc</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">boolean</span> shouldRunGC;</span><br><span class="line">        <span class="keyword">synchronized</span> (LOCK) &#123;</span><br><span class="line">            shouldRunGC = justRanFinaljuization;</span><br><span class="line">            <span class="keyword">if</span> (shouldRunGC) &#123;</span><br><span class="line">                justRanFinalization = <span class="keyword">false</span>;</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                runGC = <span class="keyword">true</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (shouldRunGC) &#123;</span><br><span class="line">            Runtime.getRuntime().gc();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> *	justRanFinaljuization仅在runFinalization（）方法中赋值为true;</span></span><br><span class="line"><span class="comment"> *	且runGC也仅在gc()方法中赋值为true</span></span><br><span class="line"><span class="comment"> * 	因此代码中仅调用System.gc()无用</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">runFinalization</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">boolean</span> shouldRunGC;</span><br><span class="line">        <span class="keyword">synchronized</span> (LOCK) &#123;</span><br><span class="line">            shouldRunGC = runGC;</span><br><span class="line">            runGC = <span class="keyword">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (shouldRunGC) &#123;</span><br><span class="line">            Runtime.getRuntime().gc();</span><br><span class="line">        &#125;</span><br><span class="line">        Runtime.getRuntime().runFinalization();</span><br><span class="line">        <span class="keyword">synchronized</span> (LOCK) &#123;</span><br><span class="line">            justRanFinalization = <span class="keyword">true</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
 
       
     </div>
@@ -275,10 +292,16 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">发表于</span>
-      
 
-      <time title="创建时间：2021-09-26 16:58:08 / 修改时间：17:30:24" itemprop="dateCreated datePublished" datetime="2021-09-26T16:58:08+08:00">2021-09-26</time>
+      <time title="创建时间：2021-09-26 16:58:08" itemprop="dateCreated datePublished" datetime="2021-09-26T16:58:08+08:00">2021-09-26</time>
     </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2021-09-29 12:47:47" itemprop="dateModified" datetime="2021-09-29T12:47:47+08:00">2021-09-29</time>
+      </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
         <i class="far fa-folder"></i>
@@ -365,7 +388,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2021-09-26 14:42:21" itemprop="dateModified" datetime="2021-09-26T14:42:21+08:00">2021-09-26</time>
+        <time title="修改时间：2021-09-29 12:47:47" itemprop="dateModified" datetime="2021-09-29T12:47:47+08:00">2021-09-29</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -472,7 +495,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2021-09-26 14:19:14" itemprop="dateModified" datetime="2021-09-26T14:19:14+08:00">2021-09-26</time>
+        <time title="修改时间：2021-09-29 12:47:47" itemprop="dateModified" datetime="2021-09-29T12:47:47+08:00">2021-09-29</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -560,7 +583,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2021-09-26 14:19:14" itemprop="dateModified" datetime="2021-09-26T14:19:14+08:00">2021-09-26</time>
+        <time title="修改时间：2021-09-29 12:47:47" itemprop="dateModified" datetime="2021-09-29T12:47:47+08:00">2021-09-29</time>
       </span>
 
   
@@ -640,7 +663,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2021-09-26 14:19:14" itemprop="dateModified" datetime="2021-09-26T14:19:14+08:00">2021-09-26</time>
+        <time title="修改时间：2021-09-29 12:47:47" itemprop="dateModified" datetime="2021-09-29T12:47:47+08:00">2021-09-29</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -724,7 +747,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2021-09-26 14:19:14" itemprop="dateModified" datetime="2021-09-26T14:19:14+08:00">2021-09-26</time>
+        <time title="修改时间：2021-09-29 12:47:47" itemprop="dateModified" datetime="2021-09-29T12:47:47+08:00">2021-09-29</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -803,10 +826,16 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">发表于</span>
-      
 
-      <time title="创建时间：2021-09-24 15:00:22 / 修改时间：15:32:18" itemprop="dateCreated datePublished" datetime="2021-09-24T15:00:22+08:00">2021-09-24</time>
+      <time title="创建时间：2021-09-24 15:00:22" itemprop="dateCreated datePublished" datetime="2021-09-24T15:00:22+08:00">2021-09-24</time>
     </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2021-09-29 12:47:47" itemprop="dateModified" datetime="2021-09-29T12:47:47+08:00">2021-09-29</time>
+      </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
         <i class="far fa-folder"></i>
@@ -888,10 +917,16 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">发表于</span>
-      
 
-      <time title="创建时间：2021-09-24 14:58:15 / 修改时间：15:44:44" itemprop="dateCreated datePublished" datetime="2021-09-24T14:58:15+08:00">2021-09-24</time>
+      <time title="创建时间：2021-09-24 14:58:15" itemprop="dateCreated datePublished" datetime="2021-09-24T14:58:15+08:00">2021-09-24</time>
     </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2021-09-29 12:47:47" itemprop="dateModified" datetime="2021-09-29T12:47:47+08:00">2021-09-29</time>
+      </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
         <i class="far fa-folder"></i>
@@ -986,10 +1021,16 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">发表于</span>
-      
 
-      <time title="创建时间：2021-09-24 13:57:58 / 修改时间：14:43:51" itemprop="dateCreated datePublished" datetime="2021-09-24T13:57:58+08:00">2021-09-24</time>
+      <time title="创建时间：2021-09-24 13:57:58" itemprop="dateCreated datePublished" datetime="2021-09-24T13:57:58+08:00">2021-09-24</time>
     </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2021-09-29 12:47:47" itemprop="dateModified" datetime="2021-09-29T12:47:47+08:00">2021-09-29</time>
+      </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
         <i class="far fa-folder"></i>
