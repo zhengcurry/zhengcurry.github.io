@@ -108,3 +108,11 @@ deploy:
   type: git
   repo: https://github.com/zhengcurry/zhengcurry.github.io
   branch: master
+  
+
+# hexo-admin authentification
+admin:
+  deployCommand: 'hexo-publish.bat'
+  username: AYI0000AYI@163.com
+  password_hash: $2a$10$QpsPzrzVR7PnShESkEpwKOUKUTeZ09cBytVdSzIquqqnJs.nJqpw.
+  secret: my super secret phrase
