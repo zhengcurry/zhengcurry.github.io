@@ -424,11 +424,9 @@ public abstract class LiveData<T> {
 
 
 
+post是怎样执行的？
 
-
-
-
-
+开启了一个主线程，由此可以得知设置livedata的值只能在主线程中。
 
 
 
