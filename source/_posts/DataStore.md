@@ -2,7 +2,8 @@
 title: DataStore
 date: 2021-10-26 14:27:23
 tags: Kotlin
-categories：Kotlin
+categories: Kotlin
+
 ---
 
 > DataStore 提供了一种安全且持久的方式来存储少量数据，例如首选项和应用程序状态。 它不支持部分更新：如果任何字段被修改，整个对象将被序列化并持久化到磁盘。 如果您想要部分更新，请考虑使用 Room API (SQLite)。
