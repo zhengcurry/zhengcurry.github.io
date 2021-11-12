@@ -128,18 +128,18 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">22</span>
+          <span class="site-state-item-count">25</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/categories/">
-        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-count">7</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags/">
-        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-count">8</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -169,6 +169,239 @@
 
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/11/11/%E8%87%AA%E5%AE%9A%E4%B9%89View%E5%8F%8A%E5%8A%A8%E7%94%BB/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Curry">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Curry's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2021/11/11/%E8%87%AA%E5%AE%9A%E4%B9%89View%E5%8F%8A%E5%8A%A8%E7%94%BB/" class="post-title-link" itemprop="url">自定义View及动画</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-11-11 09:01:23" itemprop="dateCreated datePublished" datetime="2021-11-11T09:01:23+08:00">2021-11-11</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/11/08/%E4%BA%8B%E4%BB%B6%E5%88%86%E5%8F%91/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Curry">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Curry's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2021/11/08/%E4%BA%8B%E4%BB%B6%E5%88%86%E5%8F%91/" class="post-title-link" itemprop="url">事件分发</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-11-08 15:38:05" itemprop="dateCreated datePublished" datetime="2021-11-08T15:38:05+08:00">2021-11-08</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2021-11-09 14:47:20" itemprop="dateModified" datetime="2021-11-09T14:47:20+08:00">2021-11-09</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Android/" itemprop="url" rel="index"><span itemprop="name">Android</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <ol>
+<li>首先，要知道事件包含：按下，抬起，移动，取消；这也就是对应着MotionEvent中的ACTION_DOWN、ACTION_UP、ACTION_MOVE、ACTION_CANCEL…</li>
+<li>其次，要知道分发，是在Activity、ViewGroup、View之间进行；</li>
+<li>最后涉及到的主要方法：<code>dispatchTouchEvent（）、onTouchEvent（）、onInterceptTouchEvent（）</code></li>
+</ol>
+<blockquote>
+<p>onInterceptTouchEvent为ViewGroup独有的方法</p>
+</blockquote>
+<p>项目中实例：</p>
+<ol>
+<li>当有屏幕上有触摸时，不能回到空闲状态，重写onTouchEvent（）判断ACTION_DOWN\ACTION_MOVE状态 以及ACITON_UP\ACTION_CANCEL</li>
+<li>按钮按下抬起效果</li>
+</ol>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/A_pyf/article/details/113392655">https://blog.csdn.net/A_pyf/article/details/113392655</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/1ac8d469f014">https://www.jianshu.com/p/1ac8d469f014</a></p>
+<p><a target="_blank" rel="noopener" href="https://juejin.cn/post/6844903991483039751">https://juejin.cn/post/6844903991483039751</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/e99b5e8bd67b">https://www.jianshu.com/p/e99b5e8bd67b</a></p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/10/29/Compose/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Curry">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Curry's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2021/10/29/Compose/" class="post-title-link" itemprop="url">Compose</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2021-10-29 14:25:26 / 修改时间：14:27:17" itemprop="dateCreated datePublished" datetime="2021-10-29T14:25:26+08:00">2021-10-29</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Compose/" itemprop="url" rel="index"><span itemprop="name">Compose</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>Compose 声明式UI ，自动更新数据、界面</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -426,7 +659,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2021-10-28 14:41:18" itemprop="dateModified" datetime="2021-10-28T14:41:18+08:00">2021-10-28</time>
+        <time title="修改时间：2021-10-29 15:06:13" itemprop="dateModified" datetime="2021-10-29T15:06:13+08:00">2021-10-29</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -461,7 +694,7 @@
 
 <p>协程的优势：</p>
 <ul>
-<li><p>基于kotlin变的更方便；</p>
+<li><p>基于kotlin，更方便；</p>
 </li>
 <li><p>用看起来同步的方式写出异步的代码（<code>非阻塞式挂起</code>）</p>
 </li>
@@ -481,8 +714,8 @@
 
 
 <h4 id="挂起函数"><a href="#挂起函数" class="headerlink" title="挂起函数"></a><em><strong>挂起函数</strong></em></h4><p>它不会造成线程阻塞，但是会 <em>挂起</em> 协程，并且只能在协程中使用</p>
-<p>协程挂起和恢复的实现方式</p>
 <p>协程内的<code>delay(timeMillis: Long)</code>也是一个挂起函数，由suspend修饰</p>
+<p>协程挂起和恢复的实现方式</p>
 <p><a target="_blank" rel="noopener" href="https://www.kotlincn.net/docs/reference/coroutines/basics.html">https://www.kotlincn.net/docs/reference/coroutines/basics.html</a></p>
 <p><a target="_blank" rel="noopener" href="https://github.com/Kotlin-zh/KEEP/blob/master/proposals/coroutines.md#%E5%8D%8F%E7%A8%8B%E6%A6%82%E8%BF%B0">https://github.com/Kotlin-zh/KEEP/blob/master/proposals/coroutines.md#%E5%8D%8F%E7%A8%8B%E6%A6%82%E8%BF%B0</a></p>
 <p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/92be626c594b">https://www.jianshu.com/p/92be626c594b</a></p>
@@ -782,236 +1015,6 @@
 <p>ViewModelStore内部就是HashMap存储ViewModel</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ViewModelStore</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> HashMap&lt;String, ViewModel&gt; mMap = <span class="keyword">new</span> HashMap&lt;&gt;();</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">final</span> <span class="keyword">void</span> <span class="title">put</span><span class="params">(String key, ViewModel viewModel)</span> </span>&#123;</span><br><span class="line">        ViewModel oldViewModel = mMap.put(key, viewModel);</span><br><span class="line">        <span class="keyword">if</span> (oldViewModel != <span class="keyword">null</span>) &#123;</span><br><span class="line">            oldViewModel.onCleared();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">final</span> ViewModel <span class="title">get</span><span class="params">(String key)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> mMap.get(key);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function">Set&lt;String&gt; <span class="title">keys</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> HashSet&lt;&gt;(mMap.keySet());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     *  Clears internal storage and notifies ViewModels that they are no longer used.</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title">clear</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">for</span> (ViewModel vm : mMap.values()) &#123;</span><br><span class="line">            vm.clear();</span><br><span class="line">        &#125;</span><br><span class="line">        mMap.clear();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/10/22/ArrayList%E6%98%AF%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8%E7%9A%84%E4%B9%88/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Curry">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Curry's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2021/10/22/ArrayList%E6%98%AF%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8%E7%9A%84%E4%B9%88/" class="post-title-link" itemprop="url">ArrayList是线程安全的么</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-      
-
-      <time title="创建时间：2021-10-22 10:56:58 / 修改时间：15:34:22" itemprop="dateCreated datePublished" datetime="2021-10-22T10:56:58+08:00">2021-10-22</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Android/" itemprop="url" rel="index"><span itemprop="name">Android</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/skywang12345/p/java_threads_category.html">https://www.cnblogs.com/skywang12345/p/java_threads_category.html</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/u010416101/article/details/88720974">https://blog.csdn.net/u010416101/article/details/88720974</a></p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/10/22/Java%E5%B8%B8%E8%A7%81%E7%9A%84%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Curry">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Curry's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2021/10/22/Java%E5%B8%B8%E8%A7%81%E7%9A%84%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" class="post-title-link" itemprop="url">Java常见的数据结构</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-      
-
-      <time title="创建时间：2021-10-22 10:19:36 / 修改时间：15:36:42" itemprop="dateCreated datePublished" datetime="2021-10-22T10:19:36+08:00">2021-10-22</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Android/" itemprop="url" rel="index"><span itemprop="name">Android</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h4 id="堆"><a href="#堆" class="headerlink" title="堆"></a><strong>堆</strong></h4><h4 id="栈"><a href="#栈" class="headerlink" title="栈"></a><strong>栈</strong></h4><h4 id="队列"><a href="#队列" class="headerlink" title="队列"></a><strong>队列</strong></h4><h4 id="数组"><a href="#数组" class="headerlink" title="数组"></a><strong>数组</strong></h4><h4 id="链表"><a href="#链表" class="headerlink" title="链表"></a><strong>链表</strong></h4><h4 id="二叉树"><a href="#二叉树" class="headerlink" title="二叉树"></a><strong>二叉树</strong></h4><h4 id="红黑树"><a href="#红黑树" class="headerlink" title="红黑树"></a><strong>红黑树</strong></h4><p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/8e54797ec3e0">https://www.jianshu.com/p/8e54797ec3e0</a><br><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/63138829">https://zhuanlan.zhihu.com/p/63138829</a></p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/10/13/rn%E5%85%A5%E9%97%A8/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Curry">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Curry's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2021/10/13/rn%E5%85%A5%E9%97%A8/" class="post-title-link" itemprop="url">rn入门</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2021-10-13 09:43:44" itemprop="dateCreated datePublished" datetime="2021-10-13T09:43:44+08:00">2021-10-13</time>
-    </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2021-10-22 09:43:49" itemprop="dateModified" datetime="2021-10-22T09:43:49+08:00">2021-10-22</time>
-      </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/RN/" itemprop="url" rel="index"><span itemprop="name">RN</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h3 id="环境搭建"><a href="#环境搭建" class="headerlink" title="环境搭建"></a><strong>环境搭建</strong></h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">FAILURE: Build failed with an exception.</span><br><span class="line"></span><br><span class="line">* What went wrong:</span><br><span class="line">Could not determine the dependencies of task &#x27;:app:compileDebugJavaWithJavac&#x27;.</span><br><span class="line">&gt; Failed to install the following Android SDK packages as some licences have not been accepted.</span><br><span class="line">     patcher;v4 SDK Patch Applier v4</span><br><span class="line">     emulator Android Emulator</span><br><span class="line">     platforms;android-30 Android SDK Platform 30</span><br><span class="line">     build-tools;30.0.2 Android SDK Build-Tools 30.0.2</span><br><span class="line">     tools Android SDK Tools</span><br><span class="line">  To build this project, accept the SDK license agreements and install the missing components using the Android Studio SDK Manager.</span><br><span class="line">  Alternatively, to transfer the license agreements from one workstation to another, see http://d.android.com/r/studio-ui/export-licenses.html</span><br><span class="line"></span><br><span class="line">  Using Android SDK: C:\android_sdk\platform-tools</span><br><span class="line"></span><br><span class="line">* Try:</span><br><span class="line">Run with --stacktrace option to get the stack trace. Run with --info or --debug option to get more log output. Run with --scan to get full insights.</span><br><span class="line"></span><br><span class="line">* Get more help at https://help.gradle.org</span><br><span class="line"></span><br><span class="line">BUILD FAILED in 28s</span><br><span class="line"></span><br><span class="line">error Failed to install the app. Please accept all necessary Android SDK licenses using Android SDK Manager: &quot;$ANDROID_HOME/tools/bin/sdkmanager --licenses&quot;.</span><br><span class="line">Error: Command failed: gradlew.bat app:installDebug -PreactNativeDevServerPort=8081</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>经检查是环境变量配置有问题，导致找不到对应的路径；<br>可以参考<a target="_blank" rel="noopener" href="https://www.react-native.cn/docs/environment-setup">官方文档</a></p>
 
       
     </div>

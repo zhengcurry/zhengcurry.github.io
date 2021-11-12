@@ -20,16 +20,17 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Gemini","version":"8.7.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
-<meta name="description" content="view的绘制流程分三步：测量measure 布局layout 绘制draw 测量是得到view的大小 布局是将view放置合适的位置 绘制是把view展现出来  具体源码整理如下流程图  总结： view的绘制流程，是从DecorView开始的（加载DecorView的过程，涉及到activity的加载流程），经过measure函数，计算子view、父view的大小，然后执行layout函数，">
+<meta name="description" content="具体源码整理如下流程图  梳理过源码后，再看相关的知识点：  首次 View 的绘制流程是在什么时候触发的？ ViewRootImpl 创建的时机？ ViewRootImpl 和 DecorView 的关系是什么？ DecorView 的布局是什么样的？ DecorView 的创建时机？ setContentView 的流程 LayoutInflate 的流程 Activity、PhoneWind">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Android view的绘制流程">
+<meta property="og:title" content="Android View绘制的完整流程及知识点">
 <meta property="og:url" content="http://example.com/2021/10/04/androidview%E7%9A%84%E7%BB%98%E5%88%B6%E6%B5%81%E7%A8%8B/index.html">
 <meta property="og:site_name" content="Curry&#39;s Blog">
-<meta property="og:description" content="view的绘制流程分三步：测量measure 布局layout 绘制draw 测量是得到view的大小 布局是将view放置合适的位置 绘制是把view展现出来  具体源码整理如下流程图  总结： view的绘制流程，是从DecorView开始的（加载DecorView的过程，涉及到activity的加载流程），经过measure函数，计算子view、父view的大小，然后执行layout函数，">
+<meta property="og:description" content="具体源码整理如下流程图  梳理过源码后，再看相关的知识点：  首次 View 的绘制流程是在什么时候触发的？ ViewRootImpl 创建的时机？ ViewRootImpl 和 DecorView 的关系是什么？ DecorView 的布局是什么样的？ DecorView 的创建时机？ setContentView 的流程 LayoutInflate 的流程 Activity、PhoneWind">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="http://example.com/2021/10/04/androidview%E7%9A%84%E7%BB%98%E5%88%B6%E6%B5%81%E7%A8%8B/%E6%BA%90%E7%A0%81%E6%B5%81%E7%A8%8B%E5%9B%BE.png">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/6989232-799ff8ac91e38316?imageMogr2/auto-orient/strip%7CimageView2/2/w/1080/format/webp">
 <meta property="article:published_time" content="2021-10-04T05:21:09.000Z">
-<meta property="article:modified_time" content="2021-10-08T09:20:46.190Z">
+<meta property="article:modified_time" content="2021-11-05T05:48:57.980Z">
 <meta property="article:author" content="Curry">
 <meta property="article:tag" content="Android">
 <meta name="twitter:card" content="summary">
@@ -40,10 +41,10 @@
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://example.com/2021/10/04/androidview%E7%9A%84%E7%BB%98%E5%88%B6%E6%B5%81%E7%A8%8B/","path":"2021/10/04/androidview的绘制流程/","title":"Android view的绘制流程"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://example.com/2021/10/04/androidview%E7%9A%84%E7%BB%98%E5%88%B6%E6%B5%81%E7%A8%8B/","path":"2021/10/04/androidview的绘制流程/","title":"Android View绘制的完整流程及知识点"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>Android view的绘制流程 | Curry's Blog</title>
+<title>Android View绘制的完整流程及知识点 | Curry's Blog</title>
   
 
 
@@ -135,18 +136,18 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">22</span>
+          <span class="site-state-item-count">25</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/categories/">
-        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-count">7</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags/">
-        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-count">8</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -199,7 +200,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          Android view的绘制流程
+          Android View绘制的完整流程及知识点
         </h1>
 
         <div class="post-meta-container">
@@ -217,7 +218,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2021-10-08 17:20:46" itemprop="dateModified" datetime="2021-10-08T17:20:46+08:00">2021-10-08</time>
+        <time title="修改时间：2021-11-05 13:48:57" itemprop="dateModified" datetime="2021-11-05T13:48:57+08:00">2021-11-05</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -239,21 +240,65 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <blockquote>
-<p>view的绘制流程分三步：测量measure 布局layout 绘制draw</p>
-<p>测量是得到view的大小</p>
-<p>布局是将view放置合适的位置</p>
-<p>绘制是把view展现出来</p>
-</blockquote>
-<p>具体源码整理如下<a target="_blank" rel="noopener" href="https://www.processon.com/view/link/61600cfbf346fb0e99a6d639">流程图</a></p>
+        <p>具体源码整理如下<a target="_blank" rel="noopener" href="https://www.processon.com/view/link/61600cfbf346fb0e99a6d639">流程图</a></p>
 <p><img src="/2021/10/04/androidview%E7%9A%84%E7%BB%98%E5%88%B6%E6%B5%81%E7%A8%8B/%E6%BA%90%E7%A0%81%E6%B5%81%E7%A8%8B%E5%9B%BE.png" alt="源码流程图"></p>
-<p><strong>总结：</strong></p>
-<p>view的绘制流程，是从DecorView开始的（加载DecorView的过程，涉及到activity的加载流程），经过measure函数，计算子view、父view的大小，然后执行layout函数，再执行draw。了解view绘制流程，可以从中得知，自定义view的步骤</p>
+<p>梳理过源码后，再看相关的知识点：</p>
+<ol>
+<li>首次 View 的绘制流程是在什么时候触发的？</li>
+<li>ViewRootImpl 创建的时机？</li>
+<li>ViewRootImpl 和 DecorView 的关系是什么？</li>
+<li>DecorView 的布局是什么样的？</li>
+<li>DecorView 的创建时机？</li>
+<li>setContentView 的流程</li>
+<li>LayoutInflate 的流程</li>
+<li>Activity、PhoneWindow、DecorView、ViewRootImpl 的关系？</li>
+<li>PhoneWindow 的创建时机？</li>
+<li>如何触发重新绘制？</li>
+<li>requestLayout 和 invalidate 的流程</li>
+<li>requestLayout 和 invalidate 的区别</li>
+<li>简单介绍下MeasureSpec</li>
+<li>MeasureSpec的确定</li>
+<li>子View的MeasureSpec由父View根据自身的MeasureSpec和子View的LayoutParams来共同确定子View的MeasureSpec，注意，即使确定了子View的MeasureSpec并不一定决定了子View的大小，自定义View可以根据需要修改这个值，最终通过setMeasuredDimension（width,height）设置最终大小。</li>
+</ol>
+<p><img src="https://upload-images.jianshu.io/upload_images/6989232-799ff8ac91e38316?imageMogr2/auto-orient/strip%7CimageView2/2/w/1080/format/webp" alt="img"></p>
+<p><strong>5、View执行onMeasure,onLayout的次数</strong></p>
+<p>分析ViewRootImpl的源码，scheduleTraversales()内部会执行postCallBack触发mTraversalRunnable重新走一遍performTraversals(),第二次执行performTraversals()就会触发performDraw()。所以performTraversals()走了两次，那么肯定会走2次measure方法，但不一定走2次onMeasure()，读过View measure方法源码的都应知道measure方法做了2级测量优化：</p>
+<ul>
+<li>1.如果flag不为forceLayout或者与上次测量规格（MeasureSpec）相比未改变，那么将不会进行重新测量（执行onMeasure方法），直接使用上次的测量值；</li>
+<li>2.如果满足非强制测量的条件，即前后二次测量规格不一致，会先根据目前测量规格生成的key索引缓存数据，索引到就无需进行重新测量;如果targetSDK小于API 20则二级测量优化无效，依旧会重新测量，不会采用缓存测量值。</li>
+</ul>
+<p><strong>6、getWidth()和getMeasuredWidth()的区别</strong></p>
+<p>getMeasuredWidth()、getMeasuredHeight()必须在onMeasure之后使用才有效）getMeasuredWidth() 的取值最终来源于 setMeasuredDimension() 方法调用时传递的参数, getWidth()返回的是，mRight - mLeft，mRight、mLeft 变量分别表示 View 相对父容器的左右边缘位置，getWidth()与getHeight()方法必须在layout(int l, int t, int r, int b)执行之后才有效</p>
+<p><strong>7、如何在onCreate中拿到View的宽度和高度</strong></p>
+<ul>
+<li><strong>View.post(runnable)</strong></li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">view.post(<span class="keyword">new</span> Runnable() &#123;            </span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">                <span class="keyword">int</span> width = view.getWidth();</span><br><span class="line">                <span class="keyword">int</span> measuredWidth = view.getMeasuredWidth();</span><br><span class="line">                Log.i(TAG, <span class="string">&quot;width: &quot;</span> + width);</span><br><span class="line">                Log.i(TAG, <span class="string">&quot;measuredWidth: &quot;</span> + measuredWidth);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);      </span><br></pre></td></tr></table></figure>
+
+<p>利用Handler通信机制，发送一个Runnable到MessageQueue中，当View布局处理完成时，自动发送消息，通知UI进程。借此机制，巧妙获取View的高宽属性，代码简洁，相比ViewTreeObserver监听处理，还不需要手动移除观察者监听事件。</p>
+<ul>
+<li><strong>ViewTreeObserver.addOnGlobalLayoutListener()</strong></li>
+</ul>
+<p>监听View的onLayout()绘制过程，一旦layout触发变化，立即回调onLayoutChange方法。<br> 注意，使用完也要主要调用removeOnGlobalListener()方法移除监听事件。避免后续每一次发生全局View变化均触发该事件，影响性能。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">ViewTreeObserver vto = view.getViewTreeObserver();       </span><br><span class="line">       vto.addOnGlobalLayoutListener(<span class="keyword">new</span> OnGlobalLayoutListener() &#123;</span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onGlobalLayout</span><span class="params">()</span> </span>&#123;</span><br><span class="line">                view.getViewTreeObserver().removeGlobalOnLayoutListener(<span class="keyword">this</span>);</span><br><span class="line">                Log.i(TAG, <span class="string">&quot;width: &quot;</span> + view.getWidth());</span><br><span class="line">                Log.i(TAG, <span class="string">&quot;height: &quot;</span> + view.getHeight());</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br></pre></td></tr></table></figure>
+
+<p><strong>8、invalidate和postInvalidate区别</strong></p>
+<p>二者都会出发刷新View，并且当这个View的可见性为VISIBLE的时候，View的onDraw()方法将会被调用，invalidate()方法在 UI 线程中调用，重绘当前 UI。postInvalidate() 方法在非 UI 线程中调用，通过Handler通知 UI 线程重绘。</p>
+<p><strong>9、requestLayout()的作用</strong></p>
+<p>requestLayout()也可以达到重绘view的目的，但是与前两者不同，它会先调用onLayout()重新排版，再调用ondraw()方法。当view确定自身已经不再适合现有的区域时，该view本身调用这个方法要求parent view（父类的视图）重新调用他的onMeasure、onLayout来重新设置自己位置。特别是当view的layoutparameter发生改变，并且它的值还没能应用到view上时，这时候适合调用这个方法requestLayout()。</p>
+<p><strong>10、onDraw() 和dispatchDraw()的区别</strong></p>
+<ul>
+<li>绘制View本身的内容，通过调用View.onDraw(canvas)函数实现</li>
+<li>绘制自己的孩子通过dispatchDraw（canvas）实现</li>
+</ul>
+<p>draw过程会调用onDraw(Canvas canvas)方法，然后就是dispatchDraw(Canvas canvas)方法, dispatchDraw()主要是分发给子组件进行绘制，我们通常定制组件的时候重写的是onDraw()方法。值得注意的是ViewGroup容器组件的绘制，当它没有背景时直接调用的是dispatchDraw()方法, 而绕过了draw()方法，当它有背景的时候就调用draw()方法，而draw()方法里包含了dispatchDraw()方法的调用。因此要在ViewGroup上绘制东西的时候往往重写的是dispatchDraw()方法而不是onDraw()方法，或者自定制一个Drawable，重写它的draw(Canvas c)和 getIntrinsicWidth()方法，然后设为背景。</p>
 <p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/5a71014e7b1b">https://www.jianshu.com/p/5a71014e7b1b</a></p>
 <p><a target="_blank" rel="noopener" href="https://blog.csdn.net/sinat_27154507/article/details/79748010">https://blog.csdn.net/sinat_27154507/article/details/79748010</a></p>
 <p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/andy-songwei/p/10955062.html">https://www.cnblogs.com/andy-songwei/p/10955062.html</a></p>
 <p><a target="_blank" rel="noopener" href="https://blog.csdn.net/Innost/article/details/6172893">https://blog.csdn.net/Innost/article/details/6172893</a></p>
 <p><a target="_blank" rel="noopener" href="https://blog.csdn.net/a553181867/article/details/51477040">https://blog.csdn.net/a553181867/article/details/51477040</a></p>
+<p><a target="_blank" rel="noopener" href="https://juejin.cn/post/6872140986579943438">https://juejin.cn/post/6872140986579943438</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/c5d200dde486">https://www.jianshu.com/p/c5d200dde486</a></p>
 
     </div>
 

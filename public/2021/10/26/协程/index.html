@@ -28,7 +28,7 @@
 <meta property="og:description" content="定义新协程的范围。 每个协程构建器（如launch 、 async等）都是CoroutineScope的扩展，并继承其coroutineContext以自动传播其所有元素和取消。获得作用域独立实例的最佳方法是CoroutineScope()和MainScope()工厂函数，注意在不再需要这些协程作用域时取消它们（有关解释和示例，请参阅下面的自定义用法部分）。可以使用加号运算符将其他上下文元素附加">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2021-10-26T07:39:49.000Z">
-<meta property="article:modified_time" content="2021-10-28T06:41:18.844Z">
+<meta property="article:modified_time" content="2021-10-29T07:06:13.974Z">
 <meta property="article:author" content="Curry">
 <meta property="article:tag" content="Android">
 <meta name="twitter:card" content="summary">
@@ -134,18 +134,18 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">22</span>
+          <span class="site-state-item-count">25</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/categories/">
-        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-count">7</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags/">
-        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-count">8</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -216,7 +216,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2021-10-28 14:41:18" itemprop="dateModified" datetime="2021-10-28T14:41:18+08:00">2021-10-28</time>
+        <time title="修改时间：2021-10-29 15:06:13" itemprop="dateModified" datetime="2021-10-29T15:06:13+08:00">2021-10-29</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -251,7 +251,7 @@
 
 <p>协程的优势：</p>
 <ul>
-<li><p>基于kotlin变的更方便；</p>
+<li><p>基于kotlin，更方便；</p>
 </li>
 <li><p>用看起来同步的方式写出异步的代码（<code>非阻塞式挂起</code>）</p>
 </li>
@@ -271,8 +271,8 @@
 
 
 <h4 id="挂起函数"><a href="#挂起函数" class="headerlink" title="挂起函数"></a><em><strong>挂起函数</strong></em></h4><p>它不会造成线程阻塞，但是会 <em>挂起</em> 协程，并且只能在协程中使用</p>
-<p>协程挂起和恢复的实现方式</p>
 <p>协程内的<code>delay(timeMillis: Long)</code>也是一个挂起函数，由suspend修饰</p>
+<p>协程挂起和恢复的实现方式</p>
 <p><a target="_blank" rel="noopener" href="https://www.kotlincn.net/docs/reference/coroutines/basics.html">https://www.kotlincn.net/docs/reference/coroutines/basics.html</a></p>
 <p><a target="_blank" rel="noopener" href="https://github.com/Kotlin-zh/KEEP/blob/master/proposals/coroutines.md#%E5%8D%8F%E7%A8%8B%E6%A6%82%E8%BF%B0">https://github.com/Kotlin-zh/KEEP/blob/master/proposals/coroutines.md#%E5%8D%8F%E7%A8%8B%E6%A6%82%E8%BF%B0</a></p>
 <p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/92be626c594b">https://www.jianshu.com/p/92be626c594b</a></p>
