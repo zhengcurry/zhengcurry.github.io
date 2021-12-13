@@ -20,3 +20,26 @@ categories: Android
 - **4.单例模式失效**
 - **5.数据传递的对象必须可序列化**
 
+
+
+
+
+
+
+
+
+Android 系统是基于 Linux 内核的，Linux 已经提供了管道、消息队列、共享内存和 Socket 等 IPC 机制。那为什么 Android 还要提供 Binder 来实现 IPC 呢？主要是基于**性能**、**稳定性**和**安全性**几方面的原因。
+
+![img](v2-30dce36be4e6617596b5fab96ef904c6_720w.jpg)
+
+
+
+
+
+
+
+
+
+
+
+https://juejin.cn/post/6844903589635162126
