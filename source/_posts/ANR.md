@@ -2,8 +2,7 @@
 title: ANR
 date: 2021-12-07 16:33:32
 tags: Android
-categories：Android
-
+categories: Android
 ---
 
 #### **ANR**
