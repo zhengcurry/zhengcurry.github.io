@@ -2,11 +2,57 @@
 title: ANR
 date: 2021-12-07 16:33:32
 tags: Android
-categories：Android
-
+categories: Android
 ---
 
 #### **ANR**
+
+**分类**
+
+1:**KeyDispatchTimeout**（常见）
+ input事件在`5S`内没有处理完成发生了ANR。
+ logcat日志关键字：`Input event dispatching timed out`
+
+2:**BroadcastTimeout**
+ 前台Broadcast：onReceiver在`10S`内没有处理完成发生ANR。
+ 后台Broadcast：onReceiver在`60s`内没有处理完成发生ANR。
+ logcat日志关键字：`Timeout of broadcast BroadcastRecord`
+
+3:**ServiceTimeout**
+ 前台Service：`onCreate`，`onStart`，`onBind`等生命周期在`20s`内没有处理完成发生ANR。
+ 后台Service：`onCreate`，`onStart`，`onBind`等生命周期在`200s`内没有处理完成发生ANR
+ logcat日志关键字：`Timeout executing service`
+
+4：**ContentProviderTimeout**
+ ContentProvider 在`10S`内没有处理完成发生ANR。 logcat日志关键字：timeout publishing content providers
+
+
+
+`ANR`的来源分为`Service、Broadcast、Provider`以及`Input`两种。
+
+这样区分的原因是，首先，前者发生在 **应用进程** 组件中的`ANR`问题通常是相对好解决的，若`ANR`本身容易复现，开发者通常仅需要确定组件的代码中是否在 **主线程中做了耗时处理**；而后者`ANR`发生的原因为 **输入事件** 分发超时，包括按键和屏幕的触摸事件，通过阅读上一章节，读者知道 **输入系统** 中负责处理`ANR`问题的是处于 **系统进程** 中的`InputDispatcher`，其整个流程相比前者而言逻辑更加复杂。
+
+简单理解了之后，读者需要知道，「组件类`ANR`发生原因通常是由于 **主线程中做了耗时处理**」这种说法实际上是笼统的，更准确的讲，其本质的原因是 **组件任务调度超时**，而在设备资源紧凑的情况下，`ANR`的发生更多是综合性的原因。
+
+
+
+## 常见原因
+
+1. 主线程binder耗时
+2. 主线程i/o耗时
+3. 死锁
+4. 主线程等锁耗时
+5. activity resume慢/焦点窗口切换慢（针对Input anr）
+6. 主线程有太多消息要执行，导致对应组件消息执行delay。
+7. 主线程前面的消息执行耗时，导致后面的消息delay。
+8. 跟手机当时状态有关，内存/cpu等
+9. startForeground未在Service的onStartCommand中执行
+10. 1:主线程频繁进行耗时的IO操作：如数据库读写
+     2:多线程操作的死锁，主线程被block；
+     3:主线程被Binder 对端block；
+     4:`System Server`中WatchDog出现ANR；
+     5:`service binder`的连接达到上线无法和和System Server通信
+     6:系统资源已耗尽（管道、CPU、IO）
 
 
 
@@ -15,7 +61,15 @@ trace日志分析
 ActivityManager会输出ANR信息
 
 ```java
-ActivityManager: ANR in com.ecovacs.benebot
+09-14 15:36:02.498   432   475 W BroadcastQueue: Timeout of broadcast BroadcastRecord{13e621f u0 com.ecovacs.msgservice.humanstateinfo} - receiver=android.os.BinderProxy@c6f696c, started 60000ms ago
+09-14 15:36:15.298   432   475 W BroadcastQueue: Timeout of broadcast BroadcastRecord{87e1ba5 u-1 android.intent.action.TIME_TICK} - receiver=android.os.BinderProxy@a9db7ec, started 10000ms ago
+09-14 15:36:25.300   432   475 W BroadcastQueue: Timeout of broadcast BroadcastRecord{87e1ba5 u-1 android.intent.action.TIME_TICK} - receiver=android.os.BinderProxy@fca9037, started 10000ms ago
+09-14 15:36:35.328   432   475 W BroadcastQueue: Timeout of broadcast BroadcastRecord{f6ca0e7 u-1 android.intent.action.TIME_TICK} - receiver=android.os.BinderProxy@6db3d95, started 10000ms ago
+09-14 15:36:45.329   432   475 W BroadcastQueue: Timeout of broadcast BroadcastRecord{f6ca0e7 u-1 android.intent.action.TIME_TICK} - receiver=android.os.BinderProxy@a9db7ec, started 10000ms ago
+09-14 15:36:55.330   432   475 W BroadcastQueue: Timeout of broadcast BroadcastRecord{f6ca0e7 u-1 android.intent.action.TIME_TICK} - receiver=android.os.BinderProxy@fca9037, started 10001ms ago
+09-14 15:37:05.290   432   475 W BroadcastQueue: Timeout of broadcast BroadcastRecord{3f11494 u0 com.ecovacs.msgservice.humanstateinfo} - receiver=android.os.BinderProxy@c6f696c, started 60000ms ago
+        ...
+09-14 15:36:05.286   432   475 E ActivityManager: ANR in com.ecovacs.benebot
 09-14 15:36:05.286   432   475 E ActivityManager: PID: 12693  // 进程pid
 09-14 15:36:05.286   432   475 E ActivityManager: Reason: Broadcast of Intent { act=com.ecovacs.msgservice.humanstateinfo flg=0x10 cmp=com.ecovacs.benebot/com.ecovacs.task.broadcast.ReqBroadcastReceiver (has extras) }
 09-14 15:36:05.286   432   475 E ActivityManager: Load: 4.16 / 5.15 / 4.77 // Load表明是1分钟,5分钟,15分钟CPU的负载
@@ -274,7 +328,10 @@ ActivityManager: ANR in com.ecovacs.benebot
 
 
 
+#### **总结：**
 
+1. 系统日志中搜索`ANR in`，找到ActivityManager输出的ANR信息，由此可分析出大概情况；
+2. 较为复杂的，需要接着分析trace.txt日志，找到对应pid的相关信息；
 
 
 
@@ -304,3 +361,82 @@ ActivityManager: ANR in com.ecovacs.benebot
 https://www.jianshu.com/p/bacd320b36b3
 
 https://juejin.cn/post/6844903715313303565
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+无论ANR的来源是哪里，最终都会走到*ProcessRecord*中的*appNotResponding*，这个方法包括了ANR的主要流程，所以也比较长，我们找出一些关键的逻辑来分析：***frameworks/base/services/core/java/com/android/server/am/ProcessRecord.java：***
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
