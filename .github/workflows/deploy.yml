@@ -2,13 +2,14 @@ name: Hexo Deploy
 
 on:
   push:
-    branches:
-      - master
+    paths-ignore:
+      - 'source/_drafts/**'
+      - '.github/**'
 
 jobs:
   build:
     runs-on: ubuntu-18.04
-    if: github.event.repository.owner.id == github.event.sender.id
+    name: A job to deploy blog.
 
     steps:
       - name: Checkout source
