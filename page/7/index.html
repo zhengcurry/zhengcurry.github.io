@@ -128,7 +128,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">45</span>
+          <span class="site-state-item-count">48</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -169,6 +169,308 @@
 
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/10/26/DataStore/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Curry">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Curry's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2021/10/26/DataStore/" class="post-title-link" itemprop="url">DataStore</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-10-26 14:27:23" itemprop="dateCreated datePublished" datetime="2021-10-26T14:27:23+08:00">2021-10-26</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2021-11-07 20:02:41" itemprop="dateModified" datetime="2021-11-07T20:02:41+08:00">2021-11-07</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Kotlin/" itemprop="url" rel="index"><span itemprop="name">Kotlin</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <blockquote>
+<p>DataStore 提供了一种安全且持久的方式来存储少量数据，例如首选项和应用程序状态。 它不支持部分更新：如果任何字段被修改，整个对象将被序列化并持久化到磁盘。 如果您想要部分更新，请考虑使用 Room API (SQLite)。<br>DataStore 提供 ACID 保证。 它是线程安全的，并且是非阻塞的。 特别是，它解决了 SharedPreferences API 的这些设计缺陷：</p>
+<ul>
+<li>同步 API 鼓励 StrictMode 违规</li>
+<li>apply() 和 commit() 没有发出错误信号的机制</li>
+<li>apply() 将阻塞 fsync() 上的 UI 线程</li>
+<li>不持久——它可以返回尚未持久化的状态</li>
+<li>没有一致性或事务语义</li>
+<li>解析错误时引发运行时异常</li>
+<li>公开对其内部状态的可变引用</li>
+</ul>
+</blockquote>
+<p>记录出现的问题：<br>登录页保存登录名和密码；获取时转成了livedata，并观察其数据变化，当点击了登录，会打印两遍！</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> loginName: LiveData&lt;String&gt;? =</span><br><span class="line">    DataStorePreferences(MyApplication.myApplication).getStringFlowValue(</span><br><span class="line">        DataStorePreferences.LOGIN_NAME</span><br><span class="line">    )?.asLiveData()</span><br><span class="line"><span class="keyword">val</span> loginPassword: LiveData&lt;String&gt;? =</span><br><span class="line">    DataStorePreferences(MyApplication.myApplication).getStringFlowValue(</span><br><span class="line">        DataStorePreferences.LOGIN_PASSWORD</span><br><span class="line">    )?.asLiveData()</span><br><span class="line">...</span><br><span class="line"><span class="comment">//点击登录，保存数据</span></span><br><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">saveUserInfo</span><span class="params">(username: <span class="type">String</span>, password: <span class="type">String</span>)</span></span> &#123;</span><br><span class="line">        viewModelScope.launch &#123;</span><br><span class="line">            DataStorePreferences(MyApplication.myApplication).setStringValue(</span><br><span class="line">                key = DataStorePreferences.LOGIN_NAME, value = username</span><br><span class="line">            )</span><br><span class="line">            DataStorePreferences(MyApplication.myApplication).setStringValue(</span><br><span class="line">                key = DataStorePreferences.LOGIN_PASSWORD,</span><br><span class="line">                value = password</span><br><span class="line">            )</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">...</span><br><span class="line">loginViewModel.loginPassword?.observe(<span class="keyword">this</span><span class="symbol">@LoginActivity</span>, Observer &#123;</span><br><span class="line">            <span class="keyword">val</span> loginPassword = it ?: <span class="keyword">return</span><span class="symbol">@Observer</span></span><br><span class="line">            Log.e(TAG, <span class="string">&quot;loginPassword: <span class="subst">$&#123;loginPassword&#125;</span>&quot;</span>)</span><br><span class="line">        &#125;)</span><br></pre></td></tr></table></figure>
+
+<p>正如DataStore的类注释：<code>如果任何字段被修改，整个对象将被序列化并持久化到磁盘</code>，因此对于livedata来说，保存了一遍用户名，保存了一遍密码，认为数据有两次变化，所以会打印两遍；</p>
+<p>修改代码如下：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//保存的时候，一起保存</span></span><br><span class="line"><span class="keyword">suspend</span> <span class="function"><span class="keyword">fun</span> <span class="title">setNameAndPassWord</span><span class="params">(<span class="meta">@NotNull</span> name: <span class="type">String</span>, passWord: <span class="type">String</span>)</span></span> &#123;</span><br><span class="line">    context?.applicationContext?.dataStore?.edit &#123; settings -&gt;</span><br><span class="line">        settings.putAll(</span><br><span class="line">            stringPreferencesKey(LOGIN_NAME) to name,</span><br><span class="line">            stringPreferencesKey(LOGIN_PASSWORD) to passWord</span><br><span class="line">        )</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/10/25/LiveData/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Curry">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Curry's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2021/10/25/LiveData/" class="post-title-link" itemprop="url">LiveData</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-10-25 13:40:08" itemprop="dateCreated datePublished" datetime="2021-10-25T13:40:08+08:00">2021-10-25</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2021-11-07 20:02:41" itemprop="dateModified" datetime="2021-11-07T20:02:41+08:00">2021-11-07</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Android/" itemprop="url" rel="index"><span itemprop="name">Android</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p><strong>LiveData源码的注释翻译如下：</strong></p>
+<blockquote>
+<p>LiveData 是一个可以在给定生命周期内观察到的数据持有者类。 这意味着Observer可以与LifecycleOwner成对添加，并且仅当配对的 LifecycleOwner 处于活动状态时，才会通知此观察者有关包装数据的修改。 如果它的状态是Lifecycle.State.STARTED或Lifecycle.State.RESUMED ，LifecycleOwner 被认为是活动的。 </p>
+<p>通过observeForever(Observer)添加的observeForever(Observer)被视为始终处于活动状态，因此将始终收到有关修改的通知。 对于这些观察者，您应该手动调用removeObserver(Observer) 。<br>如果相应的 Lifecycle 移动到Lifecycle.State.DESTROYED状态，则会自动删除添加了 Lifecycle 的观察者。 这对于活动和片段特别有用，它们可以安全地观察 LiveData 而不必担心泄漏：它们在被销毁时会立即取消订阅。<br>此外，LiveData 有onActive()和onInactive()方法，可以在活动Observer的数量在 0 和 1 之间变化时得到通知。这允许 LiveData 在没有任何 Observer 正在积极观察时释放任何大量资源。<br>此类旨在保存ViewModel各个数据字段，但也可用于以解耦方式在应用程序中的不同模块之间共享数据</p>
+</blockquote>
+<p>由此官方已经给出了LiveData的用途和优点；</p>
+<h4 id><a href="#" class="headerlink" title></a></h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br><span class="line">229</span><br><span class="line">230</span><br><span class="line">231</span><br><span class="line">232</span><br><span class="line">233</span><br><span class="line">234</span><br><span class="line">235</span><br><span class="line">236</span><br><span class="line">237</span><br><span class="line">238</span><br><span class="line">239</span><br><span class="line">240</span><br><span class="line">241</span><br><span class="line">242</span><br><span class="line">243</span><br><span class="line">244</span><br><span class="line">245</span><br><span class="line">246</span><br><span class="line">247</span><br><span class="line">248</span><br><span class="line">249</span><br><span class="line">250</span><br><span class="line">251</span><br><span class="line">252</span><br><span class="line">253</span><br><span class="line">254</span><br><span class="line">255</span><br><span class="line">256</span><br><span class="line">257</span><br><span class="line">258</span><br><span class="line">259</span><br><span class="line">260</span><br><span class="line">261</span><br><span class="line">262</span><br><span class="line">263</span><br><span class="line">264</span><br><span class="line">265</span><br><span class="line">266</span><br><span class="line">267</span><br><span class="line">268</span><br><span class="line">269</span><br><span class="line">270</span><br><span class="line">271</span><br><span class="line">272</span><br><span class="line">273</span><br><span class="line">274</span><br><span class="line">275</span><br><span class="line">276</span><br><span class="line">277</span><br><span class="line">278</span><br><span class="line">279</span><br><span class="line">280</span><br><span class="line">281</span><br><span class="line">282</span><br><span class="line">283</span><br><span class="line">284</span><br><span class="line">285</span><br><span class="line">286</span><br><span class="line">287</span><br><span class="line">288</span><br><span class="line">289</span><br><span class="line">290</span><br><span class="line">291</span><br><span class="line">292</span><br><span class="line">293</span><br><span class="line">294</span><br><span class="line">295</span><br><span class="line">296</span><br><span class="line">297</span><br><span class="line">298</span><br><span class="line">299</span><br><span class="line">300</span><br><span class="line">301</span><br><span class="line">302</span><br><span class="line">303</span><br><span class="line">304</span><br><span class="line">305</span><br><span class="line">306</span><br><span class="line">307</span><br><span class="line">308</span><br><span class="line">309</span><br><span class="line">310</span><br><span class="line">311</span><br><span class="line">312</span><br><span class="line">313</span><br><span class="line">314</span><br><span class="line">315</span><br><span class="line">316</span><br><span class="line">317</span><br><span class="line">318</span><br><span class="line">319</span><br><span class="line">320</span><br><span class="line">321</span><br><span class="line">322</span><br><span class="line">323</span><br><span class="line">324</span><br><span class="line">325</span><br><span class="line">326</span><br><span class="line">327</span><br><span class="line">328</span><br><span class="line">329</span><br><span class="line">330</span><br><span class="line">331</span><br><span class="line">332</span><br><span class="line">333</span><br><span class="line">334</span><br><span class="line">335</span><br><span class="line">336</span><br><span class="line">337</span><br><span class="line">338</span><br><span class="line">339</span><br><span class="line">340</span><br><span class="line">341</span><br><span class="line">342</span><br><span class="line">343</span><br><span class="line">344</span><br><span class="line">345</span><br><span class="line">346</span><br><span class="line">347</span><br><span class="line">348</span><br><span class="line">349</span><br><span class="line">350</span><br><span class="line">351</span><br><span class="line">352</span><br><span class="line">353</span><br><span class="line">354</span><br><span class="line">355</span><br><span class="line">356</span><br><span class="line">357</span><br><span class="line">358</span><br><span class="line">359</span><br><span class="line">360</span><br><span class="line">361</span><br><span class="line">362</span><br><span class="line">363</span><br><span class="line">364</span><br><span class="line">365</span><br><span class="line">366</span><br><span class="line">367</span><br><span class="line">368</span><br><span class="line">369</span><br><span class="line">370</span><br><span class="line">371</span><br><span class="line">372</span><br><span class="line">373</span><br><span class="line">374</span><br><span class="line">375</span><br><span class="line">376</span><br><span class="line">377</span><br><span class="line">378</span><br><span class="line">379</span><br><span class="line">380</span><br><span class="line">381</span><br><span class="line">382</span><br><span class="line">383</span><br><span class="line">384</span><br><span class="line">385</span><br><span class="line">386</span><br><span class="line">387</span><br><span class="line">388</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">LiveData</span>&lt;<span class="title">T</span>&gt; </span>&#123;</span><br><span class="line">    ...</span><br><span class="line">    </span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 这里是postValue()开启的线程用于主线程设置数据</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> Runnable mPostValueRunnable = <span class="keyword">new</span> Runnable() &#123;</span><br><span class="line">        <span class="meta">@SuppressWarnings(&quot;unchecked&quot;)</span></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            Object newValue;</span><br><span class="line">            <span class="keyword">synchronized</span> (mDataLock) &#123;</span><br><span class="line">                newValue = mPendingData;</span><br><span class="line">                mPendingData = NOT_SET;</span><br><span class="line">            &#125;</span><br><span class="line">            setValue((T) newValue);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">LiveData</span><span class="params">(T value)</span> </span>&#123;</span><br><span class="line">        mData = value;</span><br><span class="line">        mVersion = START_VERSION + <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">LiveData</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        mData = NOT_SET;</span><br><span class="line">        mVersion = START_VERSION;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@SuppressWarnings(&quot;unchecked&quot;)</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">considerNotify</span><span class="params">(ObserverWrapper observer)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (!observer.mActive) &#123;</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// Check latest state b4 dispatch. Maybe it changed state but we didn&#x27;t get the event yet.</span></span><br><span class="line">        <span class="comment">//</span></span><br><span class="line">        <span class="comment">// we still first check observer.active to keep it as the entrance for events. So even if</span></span><br><span class="line">        <span class="comment">// the observer moved to an active state, if we&#x27;ve not received that event, we better not</span></span><br><span class="line">        <span class="comment">// notify for a more predictable notification order.</span></span><br><span class="line">        <span class="keyword">if</span> (!observer.shouldBeActive()) &#123;</span><br><span class="line">            observer.activeStateChanged(<span class="keyword">false</span>);</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (observer.mLastVersion &gt;= mVersion) &#123;</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        observer.mLastVersion = mVersion;</span><br><span class="line">        observer.mObserver.onChanged((T) mData);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@SuppressWarnings(&quot;WeakerAccess&quot;)</span> <span class="comment">/* synthetic access */</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">dispatchingValue</span><span class="params">(<span class="meta">@Nullable</span> ObserverWrapper initiator)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (mDispatchingValue) &#123;</span><br><span class="line">            mDispatchInvalidated = <span class="keyword">true</span>;</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        mDispatchingValue = <span class="keyword">true</span>;</span><br><span class="line">        <span class="keyword">do</span> &#123;</span><br><span class="line">            mDispatchInvalidated = <span class="keyword">false</span>;</span><br><span class="line">            <span class="keyword">if</span> (initiator != <span class="keyword">null</span>) &#123;</span><br><span class="line">                considerNotify(initiator);</span><br><span class="line">                initiator = <span class="keyword">null</span>;</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="keyword">for</span> (Iterator&lt;Map.Entry&lt;Observer&lt;? <span class="keyword">super</span> T&gt;, ObserverWrapper&gt;&gt; iterator =</span><br><span class="line">                        mObservers.iteratorWithAdditions(); iterator.hasNext(); ) &#123;</span><br><span class="line">                    considerNotify(iterator.next().getValue());</span><br><span class="line">                    <span class="keyword">if</span> (mDispatchInvalidated) &#123;</span><br><span class="line">                        <span class="keyword">break</span>;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">while</span> (mDispatchInvalidated);</span><br><span class="line">        mDispatchingValue = <span class="keyword">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 在给定所有者的生命周期内将给定观察者添加到观察者列表中。 事件在主线程上调度。 如果 LiveData 已经有数据集，它将被传递给观察者。</span></span><br><span class="line"><span class="comment">     * 如果所有者处于Lifecycle.State.STARTED或Lifecycle.State.RESUMED状态（活动），观察者将仅接收事件。</span></span><br><span class="line"><span class="comment">     * 如果所有者移动到Lifecycle.State.DESTROYED状态，观察者将被自动移除。</span></span><br><span class="line"><span class="comment">     * 当owner不活动时数据发生变化时，它将不会收到任何更新。 如果它再次变为活动状态，它将自动接收最后可用的数据。</span></span><br><span class="line"><span class="comment">     * 只要给定的 LifecycleOwner 没有被销毁，LiveData 就会保持对观察者和所有者的强引用。 当它被销毁时，LiveData 删除对观察者和所有者的引用。</span></span><br><span class="line"><span class="comment">     * 如果给定的所有者已经处于Lifecycle.State.DESTROYED状态，LiveData 会忽略调用。</span></span><br><span class="line"><span class="comment">     * 如果给定的所有者、观察者元组已经在列表中，则忽略该调用。 如果观察者已经与另一个所有者在列表中，则 LiveData 会抛出IllegalArgumentException。</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@MainThread</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">observe</span><span class="params">(<span class="meta">@NonNull</span> LifecycleOwner owner, <span class="meta">@NonNull</span> Observer&lt;? <span class="keyword">super</span> T&gt; observer)</span> </span>&#123;</span><br><span class="line">        assertMainThread(<span class="string">&quot;observe&quot;</span>);</span><br><span class="line">        <span class="keyword">if</span> (owner.getLifecycle().getCurrentState() == DESTROYED) &#123;</span><br><span class="line">            <span class="comment">// ignore</span></span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        LifecycleBoundObserver wrapper = <span class="keyword">new</span> LifecycleBoundObserver(owner, observer);</span><br><span class="line">        ObserverWrapper existing = mObservers.putIfAbsent(observer, wrapper);</span><br><span class="line">        <span class="keyword">if</span> (existing != <span class="keyword">null</span> &amp;&amp; !existing.isAttachedTo(owner)) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(<span class="string">&quot;Cannot add the same observer&quot;</span></span><br><span class="line">                    + <span class="string">&quot; with different lifecycles&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (existing != <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        owner.getLifecycle().addObserver(wrapper);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Adds the given observer to the observers list. This call is similar to</span></span><br><span class="line"><span class="comment">     * &#123;<span class="doctag">@link</span> LiveData#observe(LifecycleOwner, Observer)&#125; with a LifecycleOwner, which</span></span><br><span class="line"><span class="comment">     * is always active. This means that the given observer will receive all events and will never</span></span><br><span class="line"><span class="comment">     * be automatically removed. You should manually call &#123;<span class="doctag">@link</span> #removeObserver(Observer)&#125; to stop</span></span><br><span class="line"><span class="comment">     * observing this LiveData.</span></span><br><span class="line"><span class="comment">     * While LiveData has one of such observers, it will be considered</span></span><br><span class="line"><span class="comment">     * as active.</span></span><br><span class="line"><span class="comment">     * &lt;p&gt;</span></span><br><span class="line"><span class="comment">     * If the observer was already added with an owner to this LiveData, LiveData throws an</span></span><br><span class="line"><span class="comment">     * &#123;<span class="doctag">@link</span> IllegalArgumentException&#125;.</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> observer The observer that will receive the events</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@MainThread</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">observeForever</span><span class="params">(<span class="meta">@NonNull</span> Observer&lt;? <span class="keyword">super</span> T&gt; observer)</span> </span>&#123;</span><br><span class="line">        assertMainThread(<span class="string">&quot;observeForever&quot;</span>);</span><br><span class="line">        AlwaysActiveObserver wrapper = <span class="keyword">new</span> AlwaysActiveObserver(observer);</span><br><span class="line">        ObserverWrapper existing = mObservers.putIfAbsent(observer, wrapper);</span><br><span class="line">        <span class="keyword">if</span> (existing <span class="keyword">instanceof</span> LiveData.LifecycleBoundObserver) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(<span class="string">&quot;Cannot add the same observer&quot;</span></span><br><span class="line">                    + <span class="string">&quot; with different lifecycles&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (existing != <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        wrapper.activeStateChanged(<span class="keyword">true</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Removes the given observer from the observers list.</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> observer The Observer to receive events.</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@MainThread</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">removeObserver</span><span class="params">(<span class="meta">@NonNull</span> <span class="keyword">final</span> Observer&lt;? <span class="keyword">super</span> T&gt; observer)</span> </span>&#123;</span><br><span class="line">        assertMainThread(<span class="string">&quot;removeObserver&quot;</span>);</span><br><span class="line">        ObserverWrapper removed = mObservers.remove(observer);</span><br><span class="line">        <span class="keyword">if</span> (removed == <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        removed.detachObserver();</span><br><span class="line">        removed.activeStateChanged(<span class="keyword">false</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Removes all observers that are tied to the given &#123;<span class="doctag">@link</span> LifecycleOwner&#125;.</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> owner The &#123;<span class="doctag">@code</span> LifecycleOwner&#125; scope for the observers to be removed.</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@SuppressWarnings(&quot;WeakerAccess&quot;)</span></span><br><span class="line">    <span class="meta">@MainThread</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">removeObservers</span><span class="params">(<span class="meta">@NonNull</span> <span class="keyword">final</span> LifecycleOwner owner)</span> </span>&#123;</span><br><span class="line">        assertMainThread(<span class="string">&quot;removeObservers&quot;</span>);</span><br><span class="line">        <span class="keyword">for</span> (Map.Entry&lt;Observer&lt;? <span class="keyword">super</span> T&gt;, ObserverWrapper&gt; entry : mObservers) &#123;</span><br><span class="line">            <span class="keyword">if</span> (entry.getValue().isAttachedTo(owner)) &#123;</span><br><span class="line">                removeObserver(entry.getKey());</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Posts a task to a main thread to set the given value. So if you have a following code</span></span><br><span class="line"><span class="comment">     * executed in the main thread:</span></span><br><span class="line"><span class="comment">     * &lt;pre class=&quot;prettyprint&quot;&gt;</span></span><br><span class="line"><span class="comment">     * liveData.postValue(&quot;a&quot;);</span></span><br><span class="line"><span class="comment">     * liveData.setValue(&quot;b&quot;);</span></span><br><span class="line"><span class="comment">     * &lt;/pre&gt;</span></span><br><span class="line"><span class="comment">     * The value &quot;b&quot; would be set at first and later the main thread would override it with</span></span><br><span class="line"><span class="comment">     * the value &quot;a&quot;.</span></span><br><span class="line"><span class="comment">     * &lt;p&gt;</span></span><br><span class="line"><span class="comment">     * If you called this method multiple times before a main thread executed a posted task, only</span></span><br><span class="line"><span class="comment">     * the last value would be dispatched.</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> value The new value</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">postValue</span><span class="params">(T value)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">boolean</span> postTask;</span><br><span class="line">        <span class="keyword">synchronized</span> (mDataLock) &#123;</span><br><span class="line">            postTask = mPendingData == NOT_SET;</span><br><span class="line">            mPendingData = value;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (!postTask) &#123;</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        ArchTaskExecutor.getInstance().postToMainThread(mPostValueRunnable);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Sets the value. If there are active observers, the value will be dispatched to them.</span></span><br><span class="line"><span class="comment">     * &lt;p&gt;</span></span><br><span class="line"><span class="comment">     * This method must be called from the main thread. If you need set a value from a background</span></span><br><span class="line"><span class="comment">     * thread, you can use &#123;<span class="doctag">@link</span> #postValue(Object)&#125;</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> value The new value</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@MainThread</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">setValue</span><span class="params">(T value)</span> </span>&#123;</span><br><span class="line">        assertMainThread(<span class="string">&quot;setValue&quot;</span>);</span><br><span class="line">        mVersion++;</span><br><span class="line">        mData = value;</span><br><span class="line">        dispatchingValue(<span class="keyword">null</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Returns the current value.</span></span><br><span class="line"><span class="comment">     * Note that calling this method on a background thread does not guarantee that the latest</span></span><br><span class="line"><span class="comment">     * value set will be received.</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> the current value</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@SuppressWarnings(&quot;unchecked&quot;)</span></span><br><span class="line">    <span class="meta">@Nullable</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> T <span class="title">getValue</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        Object data = mData;</span><br><span class="line">        <span class="keyword">if</span> (data != NOT_SET) &#123;</span><br><span class="line">            <span class="keyword">return</span> (T) data;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">getVersion</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> mVersion;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Called when the number of active observers change from 0 to 1.</span></span><br><span class="line"><span class="comment">     * &lt;p&gt;</span></span><br><span class="line"><span class="comment">     * This callback can be used to know that this LiveData is being used thus should be kept</span></span><br><span class="line"><span class="comment">     * up to date.</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onActive</span><span class="params">()</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Called when the number of active observers change from 1 to 0.</span></span><br><span class="line"><span class="comment">     * &lt;p&gt;</span></span><br><span class="line"><span class="comment">     * This does not mean that there are no observers left, there may still be observers but their</span></span><br><span class="line"><span class="comment">     * lifecycle states aren&#x27;t &#123;<span class="doctag">@link</span> Lifecycle.State#STARTED&#125; or &#123;<span class="doctag">@link</span> Lifecycle.State#RESUMED&#125;</span></span><br><span class="line"><span class="comment">     * (like an Activity in the back stack).</span></span><br><span class="line"><span class="comment">     * &lt;p&gt;</span></span><br><span class="line"><span class="comment">     * You can check if there are observers via &#123;<span class="doctag">@link</span> #hasObservers()&#125;.</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onInactive</span><span class="params">()</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Returns true if this LiveData has observers.</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> true if this LiveData has observers</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@SuppressWarnings(&quot;WeakerAccess&quot;)</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">hasObservers</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> mObservers.size() &gt; <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Returns true if this LiveData has active observers.</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> true if this LiveData has active observers</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@SuppressWarnings(&quot;WeakerAccess&quot;)</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">hasActiveObservers</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> mActiveCount &gt; <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@MainThread</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">changeActiveCounter</span><span class="params">(<span class="keyword">int</span> change)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> previousActiveCount = mActiveCount;</span><br><span class="line">        mActiveCount += change;</span><br><span class="line">        <span class="keyword">if</span> (mChangingActiveState) &#123;</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        mChangingActiveState = <span class="keyword">true</span>;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="keyword">while</span> (previousActiveCount != mActiveCount) &#123;</span><br><span class="line">                <span class="keyword">boolean</span> needToCallActive = previousActiveCount == <span class="number">0</span> &amp;&amp; mActiveCount &gt; <span class="number">0</span>;</span><br><span class="line">                <span class="keyword">boolean</span> needToCallInactive = previousActiveCount &gt; <span class="number">0</span> &amp;&amp; mActiveCount == <span class="number">0</span>;</span><br><span class="line">                previousActiveCount = mActiveCount;</span><br><span class="line">                <span class="keyword">if</span> (needToCallActive) &#123;</span><br><span class="line">                    onActive();</span><br><span class="line">                &#125; <span class="keyword">else</span> <span class="keyword">if</span> (needToCallInactive) &#123;</span><br><span class="line">                    onInactive();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">            mChangingActiveState = <span class="keyword">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">LifecycleBoundObserver</span> <span class="keyword">extends</span> <span class="title">ObserverWrapper</span> <span class="keyword">implements</span> <span class="title">LifecycleEventObserver</span> </span>&#123;</span><br><span class="line">        <span class="meta">@NonNull</span></span><br><span class="line">        <span class="keyword">final</span> LifecycleOwner mOwner;</span><br><span class="line"></span><br><span class="line">        LifecycleBoundObserver(<span class="meta">@NonNull</span> LifecycleOwner owner, Observer&lt;? <span class="keyword">super</span> T&gt; observer) &#123;</span><br><span class="line">            <span class="keyword">super</span>(observer);</span><br><span class="line">            mOwner = owner;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">boolean</span> <span class="title">shouldBeActive</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> mOwner.getLifecycle().getCurrentState().isAtLeast(STARTED);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onStateChanged</span><span class="params">(<span class="meta">@NonNull</span> LifecycleOwner source,</span></span></span><br><span class="line"><span class="params"><span class="function">                <span class="meta">@NonNull</span> Lifecycle.Event event)</span> </span>&#123;</span><br><span class="line">            Lifecycle.State currentState = mOwner.getLifecycle().getCurrentState();</span><br><span class="line">            <span class="keyword">if</span> (currentState == DESTROYED) &#123;</span><br><span class="line">                removeObserver(mObserver);</span><br><span class="line">                <span class="keyword">return</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            Lifecycle.State prevState = <span class="keyword">null</span>;</span><br><span class="line">            <span class="keyword">while</span> (prevState != currentState) &#123;</span><br><span class="line">                prevState = currentState;</span><br><span class="line">                activeStateChanged(shouldBeActive());</span><br><span class="line">                currentState = mOwner.getLifecycle().getCurrentState();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">boolean</span> <span class="title">isAttachedTo</span><span class="params">(LifecycleOwner owner)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> mOwner == owner;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">void</span> <span class="title">detachObserver</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            mOwner.getLifecycle().removeObserver(<span class="keyword">this</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">ObserverWrapper</span> </span>&#123;</span><br><span class="line">        <span class="keyword">final</span> Observer&lt;? <span class="keyword">super</span> T&gt; mObserver;</span><br><span class="line">        <span class="keyword">boolean</span> mActive;</span><br><span class="line">        <span class="keyword">int</span> mLastVersion = START_VERSION;</span><br><span class="line"></span><br><span class="line">        ObserverWrapper(Observer&lt;? <span class="keyword">super</span> T&gt; observer) &#123;</span><br><span class="line">            mObserver = observer;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">abstract</span> <span class="keyword">boolean</span> <span class="title">shouldBeActive</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">boolean</span> <span class="title">isAttachedTo</span><span class="params">(LifecycleOwner owner)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">void</span> <span class="title">detachObserver</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">void</span> <span class="title">activeStateChanged</span><span class="params">(<span class="keyword">boolean</span> newActive)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">if</span> (newActive == mActive) &#123;</span><br><span class="line">                <span class="keyword">return</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">// immediately set active state, so we&#x27;d never dispatch anything to inactive</span></span><br><span class="line">            <span class="comment">// owner</span></span><br><span class="line">            mActive = newActive;</span><br><span class="line">            changeActiveCounter(mActive ? <span class="number">1</span> : -<span class="number">1</span>);</span><br><span class="line">            <span class="keyword">if</span> (mActive) &#123;</span><br><span class="line">                dispatchingValue(<span class="keyword">this</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="class"><span class="keyword">class</span> <span class="title">AlwaysActiveObserver</span> <span class="keyword">extends</span> <span class="title">ObserverWrapper</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        AlwaysActiveObserver(Observer&lt;? <span class="keyword">super</span> T&gt; observer) &#123;</span><br><span class="line">            <span class="keyword">super</span>(observer);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">boolean</span> <span class="title">shouldBeActive</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">assertMainThread</span><span class="params">(String methodName)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (!ArchTaskExecutor.getInstance().isMainThread()) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> IllegalStateException(<span class="string">&quot;Cannot invoke &quot;</span> + methodName + <span class="string">&quot; on a background&quot;</span></span><br><span class="line">                    + <span class="string">&quot; thread&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<p>涉及到Lifecycle，LifecycleOwner，LifecycleBoundObserver，ObserverWrapper，LifecycleEventObserver</p>
+<p>感知生命周期，是因为observe（）方法传入了LifecycleOwner，ComponentActivity实现了此接口，获取到了Lifecycle</p>
+<h4 id="总结"><a href="#总结" class="headerlink" title="总结"></a><strong>总结</strong></h4><p>post是怎样执行的？</p>
+<p>开启了一个主线程，由此可以得知设置livedata的值只能在主线程中。</p>
+<p>何为粘性事件？<br>即发射的事件如果早于注册，那么注册之后依然可以接收到的事件称为粘性事件</p>
+<p>“数据倒灌”一词出自<a target="_blank" rel="noopener" href="https://links.jianshu.com/go?to=https://xiaozhuanlan.com/u/kunminx">KunMinX</a>的Blog<a target="_blank" rel="noopener" href="https://links.jianshu.com/go?to=https://xiaozhuanlan.com/topic/6719328450"><strong>重学安卓：LiveData 数据倒灌 背景缘由全貌 独家解析</strong></a>,即在setValue后,observe对此次set的value值会进行多次消费。比如进行第二次observe的时候获取到的数据是第一次的旧数据。这样会带来不可预期的后果。</p>
+<p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/e08287ec62cd">https://www.jianshu.com/p/e08287ec62cd</a></p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/o61NDIptP94X4HspKwiR2w">https://mp.weixin.qq.com/s/o61NDIptP94X4HspKwiR2w</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/d0244c4c7cc9">https://www.jianshu.com/p/d0244c4c7cc9</a></p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/10/22/ViewModel%E5%A6%82%E4%BD%95%E6%95%B0%E6%8D%AE%E5%85%B1%E4%BA%AB/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Curry">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Curry's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2021/10/22/ViewModel%E5%A6%82%E4%BD%95%E6%95%B0%E6%8D%AE%E5%85%B1%E4%BA%AB/" class="post-title-link" itemprop="url">ViewModel如何数据共享</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-10-22 13:51:37" itemprop="dateCreated datePublished" datetime="2021-10-22T13:51:37+08:00">2021-10-22</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2021-11-07 20:02:41" itemprop="dateModified" datetime="2021-11-07T20:02:41+08:00">2021-11-07</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Android/" itemprop="url" rel="index"><span itemprop="name">Android</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>当我们创建一个ViewModel类，获取其实例是通过ViewModelProvider</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">val testViewModel = ViewModelProvider(this).get(TestViewModel::class.java)</span><br></pre></td></tr></table></figure>
+<p>或者采用kotlin中的viewModels</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">private val testViewModel by viewModels&lt;TestViewModel&gt;()</span><br></pre></td></tr></table></figure>
+
+<p>activity和fragment组件之间的数据共享，这个不用多说，因为ViewModel是activity销毁的时候才clear，作用域是activity的生命周期，因此fragment可以持有同一个ViewModel的示例，从而共享activity的数据</p>
+<p>ViewModelProvider(this) 的参数是ViewModelStoreOwner接口，ComponentActivity实现了ViewModelStoreOwner；由此把ViewModel和Activity关联起来</p>
+<p>ViewModel的作用：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">ViewModel 是一个负责为Activity或Fragment准备和管理数据的类。 它还处理 Activity/Fragment 与应用程序其余部分的通信（例如调用业务逻辑类）。</span><br><span class="line">ViewModel 始终与作用域（片段或活动）相关联地创建，并且只要作用域处于活动状态就会保留。 例如，如果它是一个活动，直到它完成。</span><br><span class="line">换句话说，这意味着如果 ViewModel 的所有者因配置更改（例如旋转）而被销毁，则它不会被销毁。 新的所有者实例只是重新连接到现有模型。</span><br><span class="line">ViewModel 的目的是获取和保存 Activity 或 Fragment 所需的信息。 Activity 或 Fragment 应该能够观察到 ViewModel 中的变化。 ViewModel 通常通过LiveData或 Android 数据绑定公开这些信息。 您还可以使用您喜欢的框架中的任何可观察性构造。</span><br><span class="line">ViewModel 的唯一职责是管理 UI 的数据。 它永远不应该访问您的视图层次结构或保留对 Activity 或 Fragment 的引用。</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>1.规范化了<code>ViewModel</code>的基类；</li>
+<li>2.<code>ViewModel</code>不会随着<code>Activity</code>的屏幕旋转而销毁；</li>
+<li>3.在对应的作用域内，保正只生产出对应的唯一实例，保证UI组件间的通信</li>
+</ul>
+<p><strong>如何实现屏幕旋转数据也会保存的？</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//----ComponentActivity	</span></span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Retain all appropriate non-config state.  You can NOT</span></span><br><span class="line"><span class="comment">     * override this yourself!  Use a &#123;<span class="doctag">@link</span> androidx.lifecycle.ViewModel&#125; if you want to</span></span><br><span class="line"><span class="comment">     * retain your own non config state.</span></span><br><span class="line"><span class="comment">     * 保留所有适当的非配置状态。 你不能自己覆盖它！ </span></span><br><span class="line"><span class="comment">     * 如果您想保留自己的非配置状态，请使用androidx.lifecycle.ViewModel </span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="meta">@Nullable</span></span><br><span class="line">	<span class="comment">//保留非配置实例</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">final</span> Object <span class="title">onRetainNonConfigurationInstance</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        Object custom = onRetainCustomNonConfigurationInstance();</span><br><span class="line"></span><br><span class="line">        ViewModelStore viewModelStore = mViewModelStore;</span><br><span class="line">        <span class="keyword">if</span> (viewModelStore == <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="comment">// No one called getViewModelStore(), so see if there was an existing</span></span><br><span class="line">            <span class="comment">// ViewModelStore from our last NonConfigurationInstance</span></span><br><span class="line">            NonConfigurationInstances nc =</span><br><span class="line">                    (NonConfigurationInstances) getLastNonConfigurationInstance();</span><br><span class="line">            <span class="keyword">if</span> (nc != <span class="keyword">null</span>) &#123;</span><br><span class="line">                viewModelStore = nc.viewModelStore;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (viewModelStore == <span class="keyword">null</span> &amp;&amp; custom == <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        NonConfigurationInstances nci = <span class="keyword">new</span> NonConfigurationInstances();</span><br><span class="line">        nci.custom = custom;</span><br><span class="line">        nci.viewModelStore = viewModelStore;</span><br><span class="line">        <span class="keyword">return</span> nci;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Returns the &#123;<span class="doctag">@link</span> ViewModelStore&#125; associated with this activity</span></span><br><span class="line"><span class="comment">     * &lt;p&gt;</span></span><br><span class="line"><span class="comment">     * 返回与此activity关联的ViewModelStore</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@NonNull</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> ViewModelStore <span class="title">getViewModelStore</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        ...</span><br><span class="line">        <span class="keyword">if</span> (mViewModelStore == <span class="keyword">null</span>) &#123;</span><br><span class="line">            NonConfigurationInstances nc =</span><br><span class="line">                    (NonConfigurationInstances) getLastNonConfigurationInstance();</span><br><span class="line">            <span class="keyword">if</span> (nc != <span class="keyword">null</span>) &#123;</span><br><span class="line">                <span class="comment">// Restore the ViewModelStore from NonConfigurationInstances</span></span><br><span class="line">                mViewModelStore = nc.viewModelStore;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> (mViewModelStore == <span class="keyword">null</span>) &#123;</span><br><span class="line">                mViewModelStore = <span class="keyword">new</span> ViewModelStore();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> mViewModelStore;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>根据上面ComponentActivity中的源码，可以看到当调用getViewModelStore（）时，会先去获取之前的实例getLastNonConfigurationInstance()，也是就是我们ViewModel中的数据，而方法onRetainNonConfigurationInstance（）是覆写的，其触发方式，父类Activity中的方法注释也指出<code>Called by the system</code></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Returns an existing ViewModel or creates a new one in the scope (usually, a fragment or</span></span><br><span class="line"><span class="comment">     * an activity), associated with this &#123;<span class="doctag">@code</span> ViewModelProvider&#125;.</span></span><br><span class="line"><span class="comment">     * &lt;p&gt;</span></span><br><span class="line"><span class="comment">     * The created ViewModel is associated with the given scope and will be retained</span></span><br><span class="line"><span class="comment">     * as long as the scope is alive (e.g. if it is an activity, until it is</span></span><br><span class="line"><span class="comment">     * finished or process is killed).</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@NonNull</span></span><br><span class="line">    <span class="meta">@MainThread</span></span><br><span class="line">    <span class="keyword">public</span> &lt;T extends ViewModel&gt; <span class="function">T <span class="title">get</span><span class="params">(<span class="meta">@NonNull</span> Class&lt;T&gt; modelClass)</span> </span>&#123;</span><br><span class="line">        String canonicalName = modelClass.getCanonicalName();</span><br><span class="line">        <span class="keyword">if</span> (canonicalName == <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(<span class="string">&quot;Local and anonymous classes can not be ViewModels&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> get(DEFAULT_KEY + <span class="string">&quot;:&quot;</span> + canonicalName, modelClass);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@SuppressWarnings(&quot;unchecked&quot;)</span></span><br><span class="line">    <span class="meta">@NonNull</span></span><br><span class="line">    <span class="meta">@MainThread</span></span><br><span class="line">    <span class="keyword">public</span> &lt;T extends ViewModel&gt; <span class="function">T <span class="title">get</span><span class="params">(<span class="meta">@NonNull</span> String key, <span class="meta">@NonNull</span> Class&lt;T&gt; modelClass)</span> </span>&#123;</span><br><span class="line">        ViewModel viewModel = mViewModelStore.get(key);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (modelClass.isInstance(viewModel)) &#123;</span><br><span class="line">            <span class="keyword">if</span> (mFactory <span class="keyword">instanceof</span> OnRequeryFactory) &#123;</span><br><span class="line">                ((OnRequeryFactory) mFactory).onRequery(viewModel);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> (T) viewModel;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="comment">//noinspection StatementWithEmptyBody</span></span><br><span class="line">            <span class="keyword">if</span> (viewModel != <span class="keyword">null</span>) &#123;</span><br><span class="line">                <span class="comment">// <span class="doctag">TODO:</span> log a warning.</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (mFactory <span class="keyword">instanceof</span> KeyedFactory) &#123;</span><br><span class="line">            viewModel = ((KeyedFactory) mFactory).create(key, modelClass);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            viewModel = mFactory.create(modelClass);</span><br><span class="line">        &#125;</span><br><span class="line">        mViewModelStore.put(key, viewModel);</span><br><span class="line">        <span class="keyword">return</span> (T) viewModel;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>ViewModel和ViewModelStore的源码都很简单</p>
+<p>ViewModelStore内部就是HashMap存储ViewModel</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ViewModelStore</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> HashMap&lt;String, ViewModel&gt; mMap = <span class="keyword">new</span> HashMap&lt;&gt;();</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">final</span> <span class="keyword">void</span> <span class="title">put</span><span class="params">(String key, ViewModel viewModel)</span> </span>&#123;</span><br><span class="line">        ViewModel oldViewModel = mMap.put(key, viewModel);</span><br><span class="line">        <span class="keyword">if</span> (oldViewModel != <span class="keyword">null</span>) &#123;</span><br><span class="line">            oldViewModel.onCleared();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">final</span> ViewModel <span class="title">get</span><span class="params">(String key)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> mMap.get(key);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function">Set&lt;String&gt; <span class="title">keys</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> HashSet&lt;&gt;(mMap.keySet());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     *  Clears internal storage and notifies ViewModels that they are no longer used.</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title">clear</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">for</span> (ViewModel vm : mMap.values()) &#123;</span><br><span class="line">            vm.clear();</span><br><span class="line">        &#125;</span><br><span class="line">        mMap.clear();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -330,319 +632,8 @@
 
 
 
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/10/13/rn%E5%85%A5%E9%97%A8/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Curry">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Curry's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2021/10/13/rn%E5%85%A5%E9%97%A8/" class="post-title-link" itemprop="url">rn入门</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2021-10-13 09:43:44" itemprop="dateCreated datePublished" datetime="2021-10-13T09:43:44+08:00">2021-10-13</time>
-    </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2021-11-07 20:02:41" itemprop="dateModified" datetime="2021-11-07T20:02:41+08:00">2021-11-07</time>
-      </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/RN/" itemprop="url" rel="index"><span itemprop="name">RN</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h3 id="环境搭建"><a href="#环境搭建" class="headerlink" title="环境搭建"></a><strong>环境搭建</strong></h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">FAILURE: Build failed with an exception.</span><br><span class="line"></span><br><span class="line">* What went wrong:</span><br><span class="line">Could not determine the dependencies of task &#x27;:app:compileDebugJavaWithJavac&#x27;.</span><br><span class="line">&gt; Failed to install the following Android SDK packages as some licences have not been accepted.</span><br><span class="line">     patcher;v4 SDK Patch Applier v4</span><br><span class="line">     emulator Android Emulator</span><br><span class="line">     platforms;android-30 Android SDK Platform 30</span><br><span class="line">     build-tools;30.0.2 Android SDK Build-Tools 30.0.2</span><br><span class="line">     tools Android SDK Tools</span><br><span class="line">  To build this project, accept the SDK license agreements and install the missing components using the Android Studio SDK Manager.</span><br><span class="line">  Alternatively, to transfer the license agreements from one workstation to another, see http://d.android.com/r/studio-ui/export-licenses.html</span><br><span class="line"></span><br><span class="line">  Using Android SDK: C:\android_sdk\platform-tools</span><br><span class="line"></span><br><span class="line">* Try:</span><br><span class="line">Run with --stacktrace option to get the stack trace. Run with --info or --debug option to get more log output. Run with --scan to get full insights.</span><br><span class="line"></span><br><span class="line">* Get more help at https://help.gradle.org</span><br><span class="line"></span><br><span class="line">BUILD FAILED in 28s</span><br><span class="line"></span><br><span class="line">error Failed to install the app. Please accept all necessary Android SDK licenses using Android SDK Manager: &quot;$ANDROID_HOME/tools/bin/sdkmanager --licenses&quot;.</span><br><span class="line">Error: Command failed: gradlew.bat app:installDebug -PreactNativeDevServerPort=8081</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>经检查是环境变量配置有问题，导致找不到对应的路径；<br>可以参考<a target="_blank" rel="noopener" href="https://www.react-native.cn/docs/environment-setup">官方文档</a></p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/10/04/androidview%E7%9A%84%E7%BB%98%E5%88%B6%E6%B5%81%E7%A8%8B/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Curry">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Curry's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2021/10/04/androidview%E7%9A%84%E7%BB%98%E5%88%B6%E6%B5%81%E7%A8%8B/" class="post-title-link" itemprop="url">Android View绘制的完整流程及知识点</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2021-10-04 13:21:09" itemprop="dateCreated datePublished" datetime="2021-10-04T13:21:09+08:00">2021-10-04</time>
-    </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2021-12-05 15:12:34" itemprop="dateModified" datetime="2021-12-05T15:12:34+08:00">2021-12-05</time>
-      </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Android/" itemprop="url" rel="index"><span itemprop="name">Android</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>具体源码整理如下<a target="_blank" rel="noopener" href="https://www.processon.com/view/link/61600cfbf346fb0e99a6d639">流程图</a></p>
-<p><img src="/2021/10/04/androidview%E7%9A%84%E7%BB%98%E5%88%B6%E6%B5%81%E7%A8%8B/%E6%BA%90%E7%A0%81%E6%B5%81%E7%A8%8B%E5%9B%BE.png" alt="源码流程图"></p>
-<p>梳理过源码后，再看相关的知识点：</p>
-<ol>
-<li>首次 View 的绘制流程是在什么时候触发的？</li>
-<li>ViewRootImpl 创建的时机？</li>
-<li>ViewRootImpl 和 DecorView 的关系是什么？</li>
-<li>DecorView 的布局是什么样的？</li>
-<li>DecorView 的创建时机？</li>
-<li>setContentView 的流程</li>
-<li>LayoutInflate 的流程</li>
-<li>Activity、PhoneWindow、DecorView、ViewRootImpl 的关系？</li>
-<li>PhoneWindow 的创建时机？</li>
-<li>如何触发重新绘制？</li>
-<li>requestLayout 和 invalidate 的流程</li>
-<li>requestLayout 和 invalidate 的区别</li>
-<li>简单介绍下MeasureSpec</li>
-<li>MeasureSpec的确定</li>
-<li>子View的MeasureSpec由父View根据自身的MeasureSpec和子View的LayoutParams来共同确定子View的MeasureSpec，注意，即使确定了子View的MeasureSpec并不一定决定了子View的大小，自定义View可以根据需要修改这个值，最终通过setMeasuredDimension（width,height）设置最终大小。</li>
-</ol>
-<p><img src="https://upload-images.jianshu.io/upload_images/6989232-799ff8ac91e38316?imageMogr2/auto-orient/strip%7CimageView2/2/w/1080/format/webp" alt="img"></p>
-<p><strong>5、View执行onMeasure,onLayout的次数</strong></p>
-<p>分析ViewRootImpl的源码，scheduleTraversales()内部会执行postCallBack触发mTraversalRunnable重新走一遍performTraversals(),第二次执行performTraversals()就会触发performDraw()。所以performTraversals()走了两次，那么肯定会走2次measure方法，但不一定走2次onMeasure()，读过View measure方法源码的都应知道measure方法做了2级测量优化：</p>
-<ul>
-<li>1.如果flag不为forceLayout或者与上次测量规格（MeasureSpec）相比未改变，那么将不会进行重新测量（执行onMeasure方法），直接使用上次的测量值；</li>
-<li>2.如果满足非强制测量的条件，即前后二次测量规格不一致，会先根据目前测量规格生成的key索引缓存数据，索引到就无需进行重新测量;如果targetSDK小于API 20则二级测量优化无效，依旧会重新测量，不会采用缓存测量值。</li>
-</ul>
-<p><strong>6、getWidth()和getMeasuredWidth()的区别</strong></p>
-<p>getMeasuredWidth()、getMeasuredHeight()必须在onMeasure之后使用才有效）getMeasuredWidth() 的取值最终来源于 setMeasuredDimension() 方法调用时传递的参数, getWidth()返回的是，mRight - mLeft，mRight、mLeft 变量分别表示 View 相对父容器的左右边缘位置，getWidth()与getHeight()方法必须在layout(int l, int t, int r, int b)执行之后才有效</p>
-<p><strong>7、如何在onCreate中拿到View的宽度和高度</strong></p>
-<ul>
-<li><strong>View.post(runnable)</strong></li>
-</ul>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">view.post(<span class="keyword">new</span> Runnable() &#123;            </span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">                <span class="keyword">int</span> width = view.getWidth();</span><br><span class="line">                <span class="keyword">int</span> measuredWidth = view.getMeasuredWidth();</span><br><span class="line">                Log.i(TAG, <span class="string">&quot;width: &quot;</span> + width);</span><br><span class="line">                Log.i(TAG, <span class="string">&quot;measuredWidth: &quot;</span> + measuredWidth);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);      </span><br></pre></td></tr></table></figure>
-
-<p>利用Handler通信机制，发送一个Runnable到MessageQueue中，当View布局处理完成时，自动发送消息，通知UI进程。借此机制，巧妙获取View的高宽属性，代码简洁，相比ViewTreeObserver监听处理，还不需要手动移除观察者监听事件。</p>
-<ul>
-<li><strong>ViewTreeObserver.addOnGlobalLayoutListener()</strong></li>
-</ul>
-<p>监听View的onLayout()绘制过程，一旦layout触发变化，立即回调onLayoutChange方法。<br> 注意，使用完也要主要调用removeOnGlobalListener()方法移除监听事件。避免后续每一次发生全局View变化均触发该事件，影响性能。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">ViewTreeObserver vto = view.getViewTreeObserver();       </span><br><span class="line">       vto.addOnGlobalLayoutListener(<span class="keyword">new</span> OnGlobalLayoutListener() &#123;</span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onGlobalLayout</span><span class="params">()</span> </span>&#123;</span><br><span class="line">                view.getViewTreeObserver().removeGlobalOnLayoutListener(<span class="keyword">this</span>);</span><br><span class="line">                Log.i(TAG, <span class="string">&quot;width: &quot;</span> + view.getWidth());</span><br><span class="line">                Log.i(TAG, <span class="string">&quot;height: &quot;</span> + view.getHeight());</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br></pre></td></tr></table></figure>
-
-<p><strong>8、invalidate和postInvalidate区别</strong></p>
-<p>二者都会出发刷新View，并且当这个View的可见性为VISIBLE的时候，View的onDraw()方法将会被调用，invalidate()方法在 UI 线程中调用，重绘当前 UI。postInvalidate() 方法在非 UI 线程中调用，通过Handler通知 UI 线程重绘。</p>
-<p><strong>9、requestLayout()的作用</strong></p>
-<p>requestLayout()也可以达到重绘view的目的，但是与前两者不同，它会先调用onLayout()重新排版，再调用ondraw()方法。当view确定自身已经不再适合现有的区域时，该view本身调用这个方法要求parent view（父类的视图）重新调用他的onMeasure、onLayout来重新设置自己位置。特别是当view的layoutparameter发生改变，并且它的值还没能应用到view上时，这时候适合调用这个方法requestLayout()。</p>
-<p><strong>10、onDraw() 和dispatchDraw()的区别</strong></p>
-<ul>
-<li>绘制View本身的内容，通过调用View.onDraw(canvas)函数实现</li>
-<li>绘制自己的孩子通过dispatchDraw（canvas）实现</li>
-</ul>
-<p>draw过程会调用onDraw(Canvas canvas)方法，然后就是dispatchDraw(Canvas canvas)方法, dispatchDraw()主要是分发给子组件进行绘制，我们通常定制组件的时候重写的是onDraw()方法。值得注意的是ViewGroup容器组件的绘制，当它没有背景时直接调用的是dispatchDraw()方法, 而绕过了draw()方法，当它有背景的时候就调用draw()方法，而draw()方法里包含了dispatchDraw()方法的调用。因此要在ViewGroup上绘制东西的时候往往重写的是dispatchDraw()方法而不是onDraw()方法，或者自定制一个Drawable，重写它的draw(Canvas c)和 getIntrinsicWidth()方法，然后设为背景。</p>
-<p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/5a71014e7b1b">https://www.jianshu.com/p/5a71014e7b1b</a></p>
-<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/sinat_27154507/article/details/79748010">https://blog.csdn.net/sinat_27154507/article/details/79748010</a></p>
-<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/andy-songwei/p/10955062.html">https://www.cnblogs.com/andy-songwei/p/10955062.html</a></p>
-<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/Innost/article/details/6172893">https://blog.csdn.net/Innost/article/details/6172893</a></p>
-<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/a553181867/article/details/51477040">https://blog.csdn.net/a553181867/article/details/51477040</a></p>
-<p><a target="_blank" rel="noopener" href="https://juejin.cn/post/6872140986579943438">https://juejin.cn/post/6872140986579943438</a></p>
-<p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/c5d200dde486">https://www.jianshu.com/p/c5d200dde486</a></p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/09/27/android%E4%B8%AD%E7%9A%84System-gc/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Curry">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Curry's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2021/09/27/android%E4%B8%AD%E7%9A%84System-gc/" class="post-title-link" itemprop="url">android调用System.gc()有用么？</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2021-09-27 10:43:43" itemprop="dateCreated datePublished" datetime="2021-09-27T10:43:43+08:00">2021-09-27</time>
-    </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2021-11-07 20:02:41" itemprop="dateModified" datetime="2021-11-07T20:02:41+08:00">2021-11-07</time>
-      </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Android/" itemprop="url" rel="index"><span itemprop="name">Android</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h4 id="结论"><a href="#结论" class="headerlink" title="结论"></a><strong>结论</strong></h4><p>在Android中，仅调用System.gc(）并不起作用；</p>
-<p>若有需求，可采用方法：</p>
-<ol>
-<li>直接调用<code>Runtime.getRuntime().gc()</code></li>
-<li>调用<code>System.runFinalization()</code>和<code>System.gc()</code></li>
-</ol>
-<blockquote>
-<p>即使没有显式调用gc方法，虚拟机也会根据需要在单独的线程中自动执行此回收过程</p>
-</blockquote>
-<h4 id="源码分析"><a href="#源码分析" class="headerlink" title="源码分析"></a><strong>源码分析</strong></h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> *	System.gc(）源码</span></span><br><span class="line"><span class="comment"> *	由此可见，真正起作用的是Runtime.getRuntime().gc()，</span></span><br><span class="line"><span class="comment"> *	且仅当shouldRunGC=true时，才会执行；</span></span><br><span class="line"><span class="comment"> *	而shouldRunGC的赋值取决于justRanFinaljuization</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">gc</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">boolean</span> shouldRunGC;</span><br><span class="line">        <span class="keyword">synchronized</span> (LOCK) &#123;</span><br><span class="line">            shouldRunGC = justRanFinaljuization;</span><br><span class="line">            <span class="keyword">if</span> (shouldRunGC) &#123;</span><br><span class="line">                justRanFinalization = <span class="keyword">false</span>;</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                runGC = <span class="keyword">true</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (shouldRunGC) &#123;</span><br><span class="line">            Runtime.getRuntime().gc();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> *	justRanFinaljuization仅在runFinalization（）方法中赋值为true;</span></span><br><span class="line"><span class="comment"> *	且runGC也仅在gc()方法中赋值为true</span></span><br><span class="line"><span class="comment"> * 	因此代码中仅调用System.gc()无用</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">runFinalization</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">boolean</span> shouldRunGC;</span><br><span class="line">        <span class="keyword">synchronized</span> (LOCK) &#123;</span><br><span class="line">            shouldRunGC = runGC;</span><br><span class="line">            runGC = <span class="keyword">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (shouldRunGC) &#123;</span><br><span class="line">            Runtime.getRuntime().gc();</span><br><span class="line">        &#125;</span><br><span class="line">        Runtime.getRuntime().runFinalization();</span><br><span class="line">        <span class="keyword">synchronized</span> (LOCK) &#123;</span><br><span class="line">            justRanFinalization = <span class="keyword">true</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/6/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/6/">6</a><span class="page-number current">7</span><a class="page-number" href="/page/8/">8</a><a class="page-number" href="/page/9/">9</a><a class="extend next" rel="next" href="/page/8/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/page/6/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/6/">6</a><span class="page-number current">7</span><a class="page-number" href="/page/8/">8</a><span class="space">&hellip;</span><a class="page-number" href="/page/10/">10</a><a class="extend next" rel="next" href="/page/8/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 </div>
