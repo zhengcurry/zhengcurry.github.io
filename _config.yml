@@ -4,12 +4,22 @@
 
 # Site
 title: Curry's Blog
-subtitle: ''
-description: ''
+subtitle: I can do all things
+description: I can do all things
 keywords:
 author: Curry
 language: zh-CN
 timezone: ''
+
+# Sidebar Avatar
+avatar:
+  # url: #/images/avatar.gif
+  url: images/curry.jpg
+  # If true, the avatar would be dispalyed in circle.
+  rounded: true
+  # If true, the avatar would be rotated with the cursor.
+  rotated: true
+
 
 # URL
 ## Set your site url here. For example, if you use GitHub Page, set url as 'https://username.github.io/project'
@@ -64,7 +74,7 @@ index_generator:
   path: ''
   per_page: 5
   order_by: -date
-  
+
 archive_generator:
   per_page: 50
   yearly: true
@@ -113,7 +123,7 @@ deploy:
   type: git
   repo: git@github.com:zhengcurry/zhengcurry.github.io.git
   branch: master
-  
+
 
 # hexo-admin authentification
 admin:
@@ -121,3 +131,12 @@ admin:
   username: AYI0000AYI@163.com
   password_hash: $2a$10$QpsPzrzVR7PnShESkEpwKOUKUTeZ09cBytVdSzIquqqnJs.nJqpw.
   secret: my super secret phrase
+
+#copyright
+post_copyright:
+  enable: true
+  license: CC BY-NC-ND 4.0
+  license_url: https://creativecommons.org/licenses/by-nc-nd/4.0/deed.zh
+
+
+copyright_type: 2
