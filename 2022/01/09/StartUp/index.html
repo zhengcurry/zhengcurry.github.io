@@ -20,25 +20,28 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"zhengcurry.github.io","root":"/","images":"/images","scheme":"Gemini","version":"8.7.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
-<meta name="description" content="I can do all things">
-<meta property="og:type" content="website">
-<meta property="og:title" content="Curry&#39;s Blog">
-<meta property="og:url" content="https://zhengcurry.github.io/index.html">
+<meta name="description" content="介绍： JetPack成员之一 官方说法：App Startup 库提供了一种在应用程序启动时初始化组件的简单、高效的方法。  目的： ​    解决初始化时，用ContentProvider来获取context，造成的启动速度减慢的情况。 相关知识点： ​    ContentProvider获取Context ​    Android启动优化 使用方法：  依赖 123dependencies">
+<meta property="og:type" content="article">
+<meta property="og:title" content="StartUp">
+<meta property="og:url" content="https://zhengcurry.github.io/2022/01/09/StartUp/index.html">
 <meta property="og:site_name" content="Curry&#39;s Blog">
-<meta property="og:description" content="I can do all things">
+<meta property="og:description" content="介绍： JetPack成员之一 官方说法：App Startup 库提供了一种在应用程序启动时初始化组件的简单、高效的方法。  目的： ​    解决初始化时，用ContentProvider来获取context，造成的启动速度减慢的情况。 相关知识点： ​    ContentProvider获取Context ​    Android启动优化 使用方法：  依赖 123dependencies">
 <meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-01-09T06:30:52.000Z">
+<meta property="article:modified_time" content="2022-01-16T04:50:59.284Z">
 <meta property="article:author" content="Curry">
+<meta property="article:tag" content="Andoid">
 <meta name="twitter:card" content="summary">
 
 
-<link rel="canonical" href="https://zhengcurry.github.io/">
+<link rel="canonical" href="https://zhengcurry.github.io/2022/01/09/StartUp/">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":true,"isPost":false,"lang":"zh-CN","comments":"","permalink":"","path":"index.html","title":""}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://zhengcurry.github.io/2022/01/09/StartUp/","path":"2022/01/09/StartUp/","title":"StartUp"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>Curry's Blog</title>
+<title>StartUp | Curry's Blog</title>
   
 
 
@@ -105,7 +108,7 @@
 
   <aside class="sidebar">
 
-    <div class="sidebar-inner sidebar-overview-active">
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
       <ul class="sidebar-nav">
         <li class="sidebar-nav-toc">
           文章目录
@@ -118,6 +121,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%8B%E7%BB%8D%EF%BC%9A"><span class="nav-number">1.</span> <span class="nav-text">介绍：</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -174,85 +178,17 @@
 </noscript>
 
 
-    <div class="main-inner index posts-expand">
+    <div class="main-inner post posts-expand">
 
-    
+
+  
 
 
 <div class="post-block">
   
   
 
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://zhengcurry.github.io/2022/01/09/%E9%80%9A%E8%BF%87ContentProvider%E8%8E%B7%E5%8F%96context/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/curry.jpg">
-      <meta itemprop="name" content="Curry">
-      <meta itemprop="description" content="I can do all things">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Curry's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2022/01/09/%E9%80%9A%E8%BF%87ContentProvider%E8%8E%B7%E5%8F%96context/" class="post-title-link" itemprop="url">通过ContentProvider获取context</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-      
-
-      <time title="创建时间：2022-01-09 21:21:53 / 修改时间：21:39:47" itemprop="dateCreated datePublished" datetime="2022-01-09T21:21:53+08:00">2022-01-09</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>通常我们接入第三方sdk，都需要在Application中初始化；比如：</p>
-<p><strong>LeakCanary2.4</strong></p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <div>
-    </div>
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://zhengcurry.github.io/2022/01/09/StartUp/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -265,9 +201,9 @@
       <meta itemprop="name" content="Curry's Blog">
     </span>
       <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2022/01/09/StartUp/" class="post-title-link" itemprop="url">StartUp</a>
-        </h2>
+        <h1 class="post-title" itemprop="name headline">
+          StartUp
+        </h1>
 
         <div class="post-meta-container">
           <div class="post-meta">
@@ -306,7 +242,7 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h4 id="介绍："><a href="#介绍：" class="headerlink" title="介绍："></a><strong>介绍：</strong></h4><blockquote>
+        <h4 id="介绍："><a href="#介绍：" class="headerlink" title="介绍："></a><strong>介绍：</strong></h4><blockquote>
 <p>JetPack成员之一</p>
 <p>官方说法：App Startup 库提供了一种在应用程序启动时初始化组件的简单、高效的方法。</p>
 </blockquote>
@@ -378,7 +314,6 @@
 <p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/98d3623fa2d4">Android | App Startup可能比你想象中要简单</a></p>
 <p><a target="_blank" rel="noopener" href="https://juejin.cn/post/6859500445669752846">我为何弃用Jetpack的App Startup?</a></p>
 
-      
     </div>
 
     
@@ -386,11 +321,60 @@
     
 
     <div>
+<div>
+<p style="text-align: center;"><span style="font-size: 1.2em;font-weight: bold;">~~~ THE END ~~~</span></p>
+<div class="my-post-copyright">
+  <script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+
+  <!-- JS库 sweetalert 可修改路径 -->
+  <script type="text/javascript" src="http://jslibs.wuxubj.cn/sweetalert_mini/jquery-1.7.1.min.js"></script>
+  <script src="http://jslibs.wuxubj.cn/sweetalert_mini/sweetalert.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="http://jslibs.wuxubj.cn/sweetalert_mini/sweetalert.mini.css">
+
+  <p><span>本文标题:</span>StartUp</a></p>
+  <p><span>文章作者:</span>Curry</a></p>
+  <p><span>文章链接:</span><a href="/2022/01/09/StartUp/" title="StartUp">https://zhengcurry.github.io/2022/01/09/StartUp/</a>
+    <span class="copy-path"  title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="https://zhengcurry.github.io/2022/01/09/StartUp/"  aria-label="复制成功！"></i></span>
+  </p>
+  <p><span>许可协议:</span>本博客文章除特别声明外，均采用<a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" title="Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)">CC BY-NC-ND 4.0</a> 许可协议。转载请保留原文链接及作者。</p>
+</div>
+</div>
+<script>
+    var clipboard = new Clipboard('.fa-clipboard');
+    clipboard.on('success', $(function(){
+      $(".fa-clipboard").click(function(){
+        swal({
+          title: "",
+          text: '复制成功',
+          html: false,
+          timer: 500,
+          showConfirmButton: false
+        });
+      });
+    }));
+</script>
+
     </div>
 
     <footer class="post-footer">
-        <div class="post-eof"></div>
-      
+          <div class="post-tags">
+              <a href="/tags/Andoid/" rel="tag"># Andoid</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/01/06/%E6%B3%A8%E8%A7%A3/" rel="prev" title="注解">
+                  <i class="fa fa-chevron-left"></i> 注解
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/01/09/%E9%80%9A%E8%BF%87ContentProvider%E8%8E%B7%E5%8F%96context/" rel="next" title="通过ContentProvider获取context">
+                  通过ContentProvider获取context <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
     </footer>
   </article>
 </div>
@@ -398,210 +382,7 @@
 
 
 
-    
 
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://zhengcurry.github.io/2022/01/06/%E6%B3%A8%E8%A7%A3/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/curry.jpg">
-      <meta itemprop="name" content="Curry">
-      <meta itemprop="description" content="I can do all things">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Curry's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2022/01/06/%E6%B3%A8%E8%A7%A3/" class="post-title-link" itemprop="url">注解</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-      
-
-      <time title="创建时间：2022-01-06 01:05:28 / 修改时间：21:32:48" itemprop="dateCreated datePublished" datetime="2022-01-06T01:05:28+08:00">2022-01-06</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          
-      
-    </div>
-
-    
-    
-    
-
-    <div>
-    </div>
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://zhengcurry.github.io/2022/01/06/%E5%A4%9A%E7%BA%BF%E7%A8%8B/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/curry.jpg">
-      <meta itemprop="name" content="Curry">
-      <meta itemprop="description" content="I can do all things">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Curry's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2022/01/06/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" class="post-title-link" itemprop="url">多线程</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-      
-
-      <time title="创建时间：2022-01-06 00:57:32 / 修改时间：21:29:50" itemprop="dateCreated datePublished" datetime="2022-01-06T00:57:32+08:00">2022-01-06</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          
-      
-    </div>
-
-    
-    
-    
-
-    <div>
-    </div>
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://zhengcurry.github.io/2022/01/06/%E6%B3%9B%E5%9E%8B-1/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/curry.jpg">
-      <meta itemprop="name" content="Curry">
-      <meta itemprop="description" content="I can do all things">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Curry's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2022/01/06/%E6%B3%9B%E5%9E%8B-1/" class="post-title-link" itemprop="url">泛型</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-      
-
-      <time title="创建时间：2022-01-06 00:48:01 / 修改时间：21:29:50" itemprop="dateCreated datePublished" datetime="2022-01-06T00:48:01+08:00">2022-01-06</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          
-      
-    </div>
-
-    
-    
-    
-
-    <div>
-    </div>
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-  <nav class="pagination">
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/10/">10</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
-  </nav>
 
 </div>
   </main>
