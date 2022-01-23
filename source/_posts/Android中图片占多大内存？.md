@@ -68,9 +68,12 @@ com.ecovacs.admin.handle.CrashManager	crashInfo=java.lang.RuntimeException: Canv
 
 #### **问题分析：**
 
-crash中的重点是 `144050004bytes`，144050004=4501x8001x4
+1. 首先分析crash的原因，很明显是图片太大造成的，而重点是 `144050004bytes`是指什么的大小。
+2. 为什么glide这样使用会造成这样的问题。
 
+因为这张图片是运维工程师上传的，当了解这张图的（4501*8001，856kb）信息是，我们会发现，144050004不是图片的大小（存储大小），而是等于4501x8001x4；为什么是这样的呢，就需要掌握android中图片占内存多少。
 
+#### **android中图片占内存多少**
 
 
 
