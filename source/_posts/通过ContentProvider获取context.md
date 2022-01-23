@@ -6,7 +6,34 @@ Categories: Android
 
 ---
 
-通常我们接入第三方sdk，都需要在Application中初始化；比如：
 
-**LeakCanary2.4**
+
+```kotlin
+/**
+  * 获取Context的无侵入方法
+  * 如果应用的 ContentProvider 过多，会增加应用的启动时间；
+  *
+  * @see ActivityThread.handleBindApplication
+  * @see ActivityThread.installContentProviders
+  */
+internal abstract class ContextProvider : ContentProvider(){
+
+    override fun onCreate(): Boolean {
+        context?.let { init(it) }
+        return true
+    }
+}
+
+private lateinit var application : Context
+
+fun init(context : Context){
+    application= context
+}
+
+fun context() : Context{
+    return application
+}
+```
+
+
 

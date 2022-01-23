@@ -12,17 +12,17 @@ categories: Android
 >
 > 官方说法：App Startup 库提供了一种在应用程序启动时初始化组件的简单、高效的方法。
 
-**目的：**
+#### **目的：**
 
 ​	解决初始化时，用ContentProvider来获取context，造成的启动速度减慢的情况。
 
-**相关知识点：**
+#### **相关知识点：**
 
 ​	[ContentProvider获取Context]()
 
 ​	[Android启动优化]()
 
-**[使用方法：](https://developer.android.google.cn/topic/libraries/app-startup)**
+#### **[使用方法：](https://developer.android.google.cn/topic/libraries/app-startup)**
 
 1. 依赖
 
@@ -111,7 +111,7 @@ categories: Android
       AppInitializer.getInstance(context).initializeComponent(MyInitializer::class.java)
       ```
 
-**原理：**
+#### **原理：**
 
 ​	此库的源码很少，只有5个类：
 
@@ -184,7 +184,7 @@ categories: Android
 
   因此，通过源码的分析，这个库其实是起到了一个集合的作用；当一个应用，需要初始化多个通过ContentProvider获取context的库时，若相关的库都集成了startup，那么整个应用只会通过InitializationProvider来获取context。
 
-**PS：**
+#### **PS：**
 
 ​	自我理解：此库只是适用于 `通过ContentProvider获取Context进行初始化的sdk或lib` 使用；
 
@@ -192,7 +192,7 @@ categories: Android
 
 -----
 
-**记录：**
+#### **记录：**
 
 ​	基于App StartUp实现的[Android-StartUp](https://juejin.cn/post/6899748777721905159)
 
@@ -202,7 +202,7 @@ categories: Android
 
 
 
-**相关参考：**
+#### **相关参考：**
 
 https://developer.android.google.cn/topic/libraries/app-startup
 
